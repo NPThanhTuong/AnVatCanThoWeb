@@ -1,4 +1,7 @@
 using AnVatCanTho.DataAccess.Data;
+using AnVatCanThoWeb.Common.Authentication;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.EntityFrameworkCore;
@@ -9,14 +12,36 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-    builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-        .AddCookie(options =>
+    builder.Services.AddAuthentication(o =>
+        {
+            o.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        })
+        .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme,options => // For users
         {
             options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // auto logout after 30 mins 
             options.SlidingExpiration = true;
-            options.AccessDeniedPath = "/Forbidden/";
-        });
+            // options.AccessDeniedPath = "/Forbidden/";
+        })
+        .AddCookie(ApplicationAuthenticationScheme.AdminScheme, options =>
+        {
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+            options.SlidingExpiration = true;
+            options.LoginPath = new PathString("/Admin/Home/Login");
+        })
+        .AddCookie(ApplicationAuthenticationScheme.SnackBarScheme, options =>
+        {
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(30); 
+            options.SlidingExpiration = true;
+            options.LoginPath = new PathString("/SnackBar/Home/Login");
+        });;
     builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+    builder.Services.AddFluentValidationClientsideAdapters();
+    builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
+    builder.Services.AddFluentValidationAutoValidation(o =>
+    {
+        o.DisableDataAnnotationsValidation = true;
+    });
 }
 
 var app = builder.Build();
