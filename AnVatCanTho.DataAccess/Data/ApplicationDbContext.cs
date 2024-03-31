@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using AnVatCanTho.DataAccess.Extensions;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace AnVatCanTho.DataAccess.Data
@@ -482,6 +483,8 @@ namespace AnVatCanTho.DataAccess.Data
                 .IsRequired(false);
 
             OnModelCreatingPartial(modelBuilder);
+
+            modelBuilder.SeedFoundationData();
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
