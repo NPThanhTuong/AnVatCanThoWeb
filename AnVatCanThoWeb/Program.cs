@@ -26,7 +26,7 @@ var builder = WebApplication.CreateBuilder(args);
         {
             options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
             options.SlidingExpiration = true;
-            options.LoginPath = new PathString("/Admin/Home/Login");
+            options.LoginPath = new PathString("/Admin/Auth/Login");
         })
         .AddCookie(ApplicationAuthenticationScheme.SnackBarScheme, options =>
         {
