@@ -38,10 +38,8 @@ public class HomeController : Controller
         }
         
         var user = await _dbContext.Administrators
-            .SingleOrDefaultAsync(x => x.Email == loginVm.Email
-                                       && x.Password.Equals(BCrypt.Net.BCrypt.HashPassword(loginVm.Password)));
-
-        if (user is null)
+            .SingleOrDefaultAsync(x => x.Email == loginVm.Email);
+        if (user is null || !BCrypt.Net.BCrypt.Verify(loginVm.Password, user.Password))
         {
             return View(loginVm);
         }
