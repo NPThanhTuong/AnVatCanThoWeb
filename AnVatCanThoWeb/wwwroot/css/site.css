@@ -1,5 +1,7 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
@@ -8,11 +10,22 @@ html {
   }
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+body {
+  /*margin-bottom: 60px;*/
+  min-height: 100vh;
+  margin: 0;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
 }
 
-body {
-  margin-bottom: 60px;
+.header{
+    min-height: 50px;
+}
+
+.footer1{
+    min-height: 50px;
+}
+
+.btn__company{
+    padding-left: 0;
 }
