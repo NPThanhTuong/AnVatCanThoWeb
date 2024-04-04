@@ -31,15 +31,11 @@ namespace AnVatCanTho.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CustomerId")
+                    b.Property<int?>("CustomerId")
                         .HasColumnType("int")
                         .HasColumnName("Customer_Id");
 
                     b.Property<string>("DistrictName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("DistrictWardName")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
@@ -51,7 +47,7 @@ namespace AnVatCanTho.DataAccess.Migrations
                         .HasColumnType("nvarchar(128)")
                         .HasColumnName("NoAndStreet");
 
-                    b.Property<int>("SnackBarId")
+                    b.Property<int?>("SnackBarId")
                         .HasColumnType("int")
                         .HasColumnName("SnackBar_Id");
 
@@ -62,20 +58,52 @@ namespace AnVatCanTho.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DistrictName");
-
-                    b.HasIndex("WardName", "DistrictWardName");
+                    b.HasIndex("WardName", "DistrictName");
 
                     b.HasIndex(new[] { "Id" }, "ADDRESS_PK")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "DistrictWardName", "WardName" }, "AddressBelongToWard_FK");
+                    b.HasIndex(new[] { "DistrictName", "WardName" }, "AddressBelongToWard_FK");
 
                     b.HasIndex(new[] { "CustomerId" }, "CustomerHasAddress_FK");
 
                     b.HasIndex(new[] { "SnackBarId" }, "SnackBarHasAddress_FK");
 
                     b.ToTable("Addresses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CustomerId = 1,
+                            DistrictName = "Ninh Kiều",
+                            NoAndStreet = "3/2",
+                            WardName = "Xuân Khánh"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CustomerId = 2,
+                            DistrictName = "Ninh Kiều",
+                            NoAndStreet = "3/2",
+                            WardName = "Xuân Khánh"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            DistrictName = "Cái Răng",
+                            NoAndStreet = "Lý Thái Tổ",
+                            SnackBarId = 1,
+                            WardName = "Lê Bình"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            DistrictName = "Cái Răng",
+                            NoAndStreet = "Trần Văn Trà",
+                            SnackBarId = 2,
+                            WardName = "Lê Bình"
+                        });
                 });
 
             modelBuilder.Entity("AnVatCanTho.Models.Administrator", b =>
@@ -145,6 +173,20 @@ namespace AnVatCanTho.DataAccess.Migrations
                     b.HasIndex(new[] { "RoleId" }, "AdministratorHasRole_FK");
 
                     b.ToTable("Administrators");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            City = "NA",
+                            DisplayName = "NA",
+                            Dob = new DateTime(2024, 4, 3, 19, 55, 39, 271, DateTimeKind.Local).AddTicks(2567),
+                            Email = "admin@site.com",
+                            Password = "$2a$11$5TW40BYwYyBh1WFv157uXu8UsimlUlpzeCcLuT5UDtz50lLtBi8jW",
+                            RoleId = 1,
+                            Tel = "NA",
+                            Username = "NA"
+                        });
                 });
 
             modelBuilder.Entity("AnVatCanTho.Models.Bill", b =>
@@ -223,6 +265,24 @@ namespace AnVatCanTho.DataAccess.Migrations
                     b.HasIndex(new[] { "CustomerId" }, "CustomerHasComment_FK");
 
                     b.ToTable("Comments");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Content = "NA",
+                            CustomerId = 1,
+                            ProductId = 1,
+                            SnackBarId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Content = "NA",
+                            CustomerId = 2,
+                            ProductId = 2,
+                            SnackBarId = 2
+                        });
                 });
 
             modelBuilder.Entity("AnVatCanTho.Models.Customer", b =>
@@ -281,6 +341,28 @@ namespace AnVatCanTho.DataAccess.Migrations
                         .IsUnique();
 
                     b.ToTable("Customers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DisplayName = "NVA",
+                            Dob = new DateTime(2024, 4, 3, 19, 55, 39, 128, DateTimeKind.Local).AddTicks(5312),
+                            Email = "nva@gmail.com",
+                            Password = "$2a$11$JPOHzRVNtb1SHnCCje9q9.cJF0iC4Dhp3LkVslth7Ndzv9nChoPli",
+                            Tel = "0123456789",
+                            Username = "Nguyễn Văn A"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            DisplayName = "NVB",
+                            Dob = new DateTime(2024, 4, 3, 19, 55, 39, 271, DateTimeKind.Local).AddTicks(2135),
+                            Email = "nvb@gmail.com",
+                            Password = "$2a$11$32PpsqyoZavoO1ziHjQeGePy2GObWuyxPkjwpkaROe12b/yg7G.42",
+                            Tel = "0223456789",
+                            Username = "Nguyễn Văn B"
+                        });
                 });
 
             modelBuilder.Entity("AnVatCanTho.Models.District", b =>
@@ -296,6 +378,16 @@ namespace AnVatCanTho.DataAccess.Migrations
                         .IsUnique();
 
                     b.ToTable("Districts");
+
+                    b.HasData(
+                        new
+                        {
+                            Name = "Ninh Kiều"
+                        },
+                        new
+                        {
+                            Name = "Cái Răng"
+                        });
                 });
 
             modelBuilder.Entity("AnVatCanTho.Models.Order", b =>
@@ -419,6 +511,30 @@ namespace AnVatCanTho.DataAccess.Migrations
                     b.HasIndex(new[] { "ProductCategoryId" }, "ProductOfProductCategory_FK");
 
                     b.ToTable("Products");
+
+                    b.HasData(
+                        new
+                        {
+                            SnackBarId = 2,
+                            Id = 2,
+                            Description = "Description",
+                            Ingredient = "NA",
+                            Name = "Khoai tây chiên",
+                            ProductCategoryId = 1,
+                            Stock = 1,
+                            UnitPrice = 1
+                        },
+                        new
+                        {
+                            SnackBarId = 1,
+                            Id = 1,
+                            Description = "Description",
+                            Ingredient = "NA",
+                            Name = "Sinh tố bơ",
+                            ProductCategoryId = 2,
+                            Stock = 1,
+                            UnitPrice = 1
+                        });
                 });
 
             modelBuilder.Entity("AnVatCanTho.Models.ProductCategory", b =>
@@ -454,6 +570,36 @@ namespace AnVatCanTho.DataAccess.Migrations
                     b.HasIndex(new[] { "ProductTypeId" }, "ProductCategoryOfProductType_FK");
 
                     b.ToTable("Product_Categories", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 2,
+                            Description = "Description",
+                            Name = "Sinh tố",
+                            ProductTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 1,
+                            Description = "Description",
+                            Name = "Trà",
+                            ProductTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Description",
+                            Name = "Thức ăn nhanh",
+                            ProductTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "Description",
+                            Name = "Thức ăn lành mạnh",
+                            ProductTypeId = 2
+                        });
                 });
 
             modelBuilder.Entity("AnVatCanTho.Models.ProductImage", b =>
@@ -481,6 +627,20 @@ namespace AnVatCanTho.DataAccess.Migrations
                     b.HasIndex(new[] { "SnackBarId", "ProductId" }, "ProductHasImage_FK");
 
                     b.ToTable("Product_Images", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            PathName = "NA2",
+                            ProductId = 2,
+                            SnackBarId = 2
+                        },
+                        new
+                        {
+                            PathName = "NA",
+                            ProductId = 1,
+                            SnackBarId = 1
+                        });
                 });
 
             modelBuilder.Entity("AnVatCanTho.Models.ProductType", b =>
@@ -504,6 +664,18 @@ namespace AnVatCanTho.DataAccess.Migrations
                         .IsUnique();
 
                     b.ToTable("Product_Types", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Thức uống"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Thức ăn"
+                        });
                 });
 
             modelBuilder.Entity("AnVatCanTho.Models.Rating", b =>
@@ -531,6 +703,22 @@ namespace AnVatCanTho.DataAccess.Migrations
                     b.HasIndex(new[] { "ProductId", "SnackBarId" }, "DetailRatingofProduct_FK");
 
                     b.ToTable("Ratings");
+
+                    b.HasData(
+                        new
+                        {
+                            SnackBarId = 1,
+                            ProductId = 1,
+                            CustomerId = 1,
+                            Star = 3.0
+                        },
+                        new
+                        {
+                            SnackBarId = 2,
+                            ProductId = 2,
+                            CustomerId = 2,
+                            Star = 4.0
+                        });
                 });
 
             modelBuilder.Entity("AnVatCanTho.Models.Role", b =>
@@ -560,6 +748,14 @@ namespace AnVatCanTho.DataAccess.Migrations
                         .IsUnique();
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Administrator",
+                            Permission = "all"
+                        });
                 });
 
             modelBuilder.Entity("AnVatCanTho.Models.SnackBar", b =>
@@ -629,6 +825,30 @@ namespace AnVatCanTho.DataAccess.Migrations
                         .IsUnique();
 
                     b.ToTable("Snack_Bars", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Description",
+                            DisplayName = "snackbar1",
+                            Dob = new DateTime(2024, 4, 3, 19, 55, 39, 586, DateTimeKind.Local).AddTicks(215),
+                            Email = "snackbar1@site.com",
+                            Password = "$2a$11$v4fl.EFctO0bciAxkDeFIOOCOAYodqb6YzYthDg6/SGIUa34GFGQi",
+                            Tel = "NA",
+                            Username = "snackbar1"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Description",
+                            DisplayName = "snackbar2",
+                            Dob = new DateTime(2024, 4, 3, 19, 55, 39, 726, DateTimeKind.Local).AddTicks(846),
+                            Email = "snackbar2@site.com",
+                            Password = "$2a$11$iEaqDWDD3pfc6aVF.HbgRexoRI/kW5UQ12C3YotrLUMz6OE6NOKfq",
+                            Tel = "NA",
+                            Username = "snackbar2"
+                        });
                 });
 
             modelBuilder.Entity("AnVatCanTho.Models.Ward", b =>
@@ -649,15 +869,35 @@ namespace AnVatCanTho.DataAccess.Migrations
                         .IsUnique();
 
                     b.ToTable("Wards");
+
+                    b.HasData(
+                        new
+                        {
+                            DistrictName = "Ninh Kiều",
+                            Name = "Xuân Khánh"
+                        },
+                        new
+                        {
+                            DistrictName = "Ninh Kiều",
+                            Name = "An Cư"
+                        },
+                        new
+                        {
+                            DistrictName = "Cái Răng",
+                            Name = "Lê Bình"
+                        },
+                        new
+                        {
+                            DistrictName = "Cái Răng",
+                            Name = "Tân Phú"
+                        });
                 });
 
             modelBuilder.Entity("AnVatCanTho.Models.Address", b =>
                 {
                     b.HasOne("AnVatCanTho.Models.Customer", "Customer")
                         .WithMany("Addresses")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CustomerId");
 
                     b.HasOne("AnVatCanTho.Models.District", "District")
                         .WithMany()
@@ -671,7 +911,7 @@ namespace AnVatCanTho.DataAccess.Migrations
 
                     b.HasOne("AnVatCanTho.Models.Ward", "Ward")
                         .WithMany("Addresses")
-                        .HasForeignKey("WardName", "DistrictWardName")
+                        .HasForeignKey("WardName", "DistrictName")
                         .HasPrincipalKey("Name", "DistrictName");
 
                     b.Navigation("Customer");
