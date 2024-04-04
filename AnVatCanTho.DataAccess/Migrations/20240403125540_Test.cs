@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AnVatCanTho.DataAccess.Migrations
 {
-    public partial class InitDataBase : Migration
+    public partial class Test : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -201,11 +201,10 @@ namespace AnVatCanTho.DataAccess.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    SnackBar_Id = table.Column<int>(type: "int", nullable: false),
+                    SnackBar_Id = table.Column<int>(type: "int", nullable: true),
                     District_Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    DistrictName = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     Ward_Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    Customer_Id = table.Column<int>(type: "int", nullable: false),
+                    Customer_Id = table.Column<int>(type: "int", nullable: true),
                     NoAndStreet = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false)
                 },
                 constraints: table =>
@@ -215,11 +214,10 @@ namespace AnVatCanTho.DataAccess.Migrations
                         name: "FK_Addresses_Customers_Customer_Id",
                         column: x => x.Customer_Id,
                         principalTable: "Customers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Addresses_Districts_DistrictName",
-                        column: x => x.DistrictName,
+                        name: "FK_Addresses_Districts_District_Name",
+                        column: x => x.District_Name,
                         principalTable: "Districts",
                         principalColumn: "Name",
                         onDelete: ReferentialAction.Cascade);
@@ -387,6 +385,121 @@ namespace AnVatCanTho.DataAccess.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Customers",
+                columns: new[] { "Id", "Avatar", "Display_Name", "DOB", "Email", "Password", "Tel", "Username" },
+                values: new object[,]
+                {
+                    { 1, null, "NVA", new DateTime(2024, 4, 3, 19, 55, 39, 128, DateTimeKind.Local).AddTicks(5312), "nva@gmail.com", "$2a$11$JPOHzRVNtb1SHnCCje9q9.cJF0iC4Dhp3LkVslth7Ndzv9nChoPli", "0123456789", "Nguyễn Văn A" },
+                    { 2, null, "NVB", new DateTime(2024, 4, 3, 19, 55, 39, 271, DateTimeKind.Local).AddTicks(2135), "nvb@gmail.com", "$2a$11$32PpsqyoZavoO1ziHjQeGePy2GObWuyxPkjwpkaROe12b/yg7G.42", "0223456789", "Nguyễn Văn B" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Districts",
+                column: "Name",
+                values: new object[]
+                {
+                    "Cái Răng",
+                    "Ninh Kiều"
+                });
+
+            migrationBuilder.InsertData(
+                table: "Product_Types",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Thức uống" },
+                    { 2, "Thức ăn" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Roles",
+                columns: new[] { "Id", "Name", "Permission" },
+                values: new object[] { 1, "Administrator", "all" });
+
+            migrationBuilder.InsertData(
+                table: "Snack_Bars",
+                columns: new[] { "Id", "Avatar", "CoverImage", "Description", "Display_Name", "DOB", "Email", "Password", "Tel", "Username" },
+                values: new object[,]
+                {
+                    { 1, null, null, "Description", "snackbar1", new DateTime(2024, 4, 3, 19, 55, 39, 586, DateTimeKind.Local).AddTicks(215), "snackbar1@site.com", "$2a$11$v4fl.EFctO0bciAxkDeFIOOCOAYodqb6YzYthDg6/SGIUa34GFGQi", "NA", "snackbar1" },
+                    { 2, null, null, "Description", "snackbar2", new DateTime(2024, 4, 3, 19, 55, 39, 726, DateTimeKind.Local).AddTicks(846), "snackbar2@site.com", "$2a$11$iEaqDWDD3pfc6aVF.HbgRexoRI/kW5UQ12C3YotrLUMz6OE6NOKfq", "NA", "snackbar2" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Administrators",
+                columns: new[] { "Id", "Avatar", "City", "Display_Name", "DOB", "Email", "Password", "RoleId", "Tel", "Username" },
+                values: new object[] { 1, null, "NA", "NA", new DateTime(2024, 4, 3, 19, 55, 39, 271, DateTimeKind.Local).AddTicks(2567), "admin@site.com", "$2a$11$5TW40BYwYyBh1WFv157uXu8UsimlUlpzeCcLuT5UDtz50lLtBi8jW", 1, "NA", "NA" });
+
+            migrationBuilder.InsertData(
+                table: "Product_Categories",
+                columns: new[] { "Id", "Description", "Name", "ProductType_Id" },
+                values: new object[,]
+                {
+                    { 1, "Description", "Trà", 1 },
+                    { 2, "Description", "Sinh tố", 1 },
+                    { 3, "Description", "Thức ăn nhanh", 2 },
+                    { 4, "Description", "Thức ăn lành mạnh", 2 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Wards",
+                columns: new[] { "District_Name", "Name" },
+                values: new object[,]
+                {
+                    { "Cái Răng", "Lê Bình" },
+                    { "Cái Răng", "Tân Phú" },
+                    { "Ninh Kiều", "An Cư" },
+                    { "Ninh Kiều", "Xuân Khánh" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Addresses",
+                columns: new[] { "Id", "Customer_Id", "District_Name", "NoAndStreet", "SnackBar_Id", "Ward_Name" },
+                values: new object[,]
+                {
+                    { 1, 1, "Ninh Kiều", "3/2", null, "Xuân Khánh" },
+                    { 2, 2, "Ninh Kiều", "3/2", null, "Xuân Khánh" },
+                    { 3, null, "Cái Răng", "Lý Thái Tổ", 1, "Lê Bình" },
+                    { 4, null, "Cái Răng", "Trần Văn Trà", 2, "Lê Bình" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Products",
+                columns: new[] { "Id", "SnackBar_Id", "Description", "Ingredient", "Name", "ProductCategory_Id", "Stock", "UnitPrice" },
+                values: new object[,]
+                {
+                    { 1, 1, "Description", "NA", "Sinh tố bơ", 2, 1, 1 },
+                    { 2, 2, "Description", "NA", "Khoai tây chiên", 1, 1, 1 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Comments",
+                columns: new[] { "Id", "Content", "Customer_Id", "LikeQuantity", "Product_Id", "SnackBar_Id" },
+                values: new object[,]
+                {
+                    { 1, "NA", 1, null, 1, 1 },
+                    { 2, "NA", 2, null, 2, 2 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Product_Images",
+                columns: new[] { "Path_Name", "Product_Id", "SnackBar_Id" },
+                values: new object[,]
+                {
+                    { "NA", 1, 1 },
+                    { "NA2", 2, 2 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Ratings",
+                columns: new[] { "Customer_Id", "Product_Id", "SnackBar_Id", "Star" },
+                values: new object[,]
+                {
+                    { 1, 1, 1, 3.0 },
+                    { 2, 2, 2, 4.0 }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "ADDRESS_PK",
                 table: "Addresses",
@@ -402,11 +515,6 @@ namespace AnVatCanTho.DataAccess.Migrations
                 name: "CustomerHasAddress_FK",
                 table: "Addresses",
                 column: "Customer_Id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Addresses_DistrictName",
-                table: "Addresses",
-                column: "DistrictName");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Addresses_Ward_Name_District_Name",

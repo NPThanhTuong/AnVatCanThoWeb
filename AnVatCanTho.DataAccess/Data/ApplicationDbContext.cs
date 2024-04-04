@@ -47,7 +47,7 @@ namespace AnVatCanTho.DataAccess.Data
 
                 entity.HasIndex(e => e.Id, "ADDRESS_PK")
                     .IsUnique();
-                entity.HasIndex(e => new { e.DistrictWardName, e.WardName }, "AddressBelongToWard_FK");
+                entity.HasIndex(e => new { e.DistrictName, e.WardName }, "AddressBelongToWard_FK");
                 entity.HasIndex(e => e.CustomerId, "CustomerHasAddress_FK");
                 entity.HasIndex(e => e.SnackBarId, "SnackBarHasAddress_FK");
 
@@ -56,7 +56,7 @@ namespace AnVatCanTho.DataAccess.Data
                     .HasMaxLength(128)
                     .HasColumnName("NoAndStreet");
                 entity.Property(e => e.CustomerId).HasColumnName("Customer_Id");
-                entity.Property(e => e.DistrictWardName)
+                entity.Property(e => e.DistrictName)
                     .HasMaxLength(50)
                     .HasColumnName("District_Name");
                 entity.Property(e => e.SnackBarId).HasColumnName("SnackBar_Id");
@@ -420,7 +420,7 @@ namespace AnVatCanTho.DataAccess.Data
             modelBuilder.Entity<Ward>().HasMany(e => e.Addresses)
                 .WithOne(e => e.Ward)
                 .HasPrincipalKey(e => new { e.Name, e.DistrictName })
-                .HasForeignKey(e => new { e.WardName, e.DistrictWardName })
+                .HasForeignKey(e => new { e.WardName, e.DistrictName })
                 .IsRequired(false);
 
             modelBuilder.Entity<Administrator>(entity =>

@@ -18,11 +18,11 @@ body {
   grid-template-rows: auto 1fr auto;
 }
 
-header{
+.header{
     min-height: 50px;
 }
 
-footer{
+.footer1{
     min-height: 50px;
 }
 
