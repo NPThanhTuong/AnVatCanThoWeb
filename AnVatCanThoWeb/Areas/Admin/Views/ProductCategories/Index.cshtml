@@ -1,0 +1,43 @@
+<h1 class="mt-4">Tables</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">
+        <a asp-action="Index" asp-controller="Home" asp-area="Admin">Trang chủ</a>
+    </li>
+    <li class="breadcrumb-item active">Danh mục sản phẩm</li>
+</ol>
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="mb-2" style="max-width: 250px">
+            <label for="product-types" class="form-label">
+                Loại sản phẩm
+            </label>
+            <select id="product-types" class="form-select" asp-items="@ViewData["ProductTypes"] as IEnumerable<SelectListItem>">
+                <option value="-1">Chọn loại sản phẩm</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-table me-1"></i>
+        Danh mục sản phẩm
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead>
+            <tr class="table-primary">
+                <th>#</th>
+                <th>Tên</th>
+                <th>Mô tả</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody id="table-body">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/console/admin/product-categories/scripts.js"></script>
+}
