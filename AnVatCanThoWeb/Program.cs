@@ -32,7 +32,7 @@ var builder = WebApplication.CreateBuilder(args);
         {
             options.ExpireTimeSpan = TimeSpan.FromMinutes(30); 
             options.SlidingExpiration = true;
-            options.LoginPath = new PathString("/SnackBar/Home/Login");
+            options.LoginPath = new PathString("/SnackBar/Auth/Login");
         });;
     builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
