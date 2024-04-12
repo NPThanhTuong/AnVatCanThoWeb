@@ -1,0 +1,140 @@
+﻿@using AnVatCanTho.Models
+@using System.Globalization
+@using AnVatCanThoWeb.ViewModels
+
+@model IEnumerable<ProductVM>
+
+<main class="bg-gray">
+    <div class="container py-3 ">
+        <div class="row product-breadcrumb">
+            <div class="col">
+                <nav aria-label="breadcrumb align-items-center">
+                    <ol class="breadcrumb breadcrumb-text-light breadcrumb-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Home">Trang chủ</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Sản phẩm</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12 col-lg-3">
+                @* Chuc nang loc cho san pham *@
+                <form method="get" asp-action="Index" class="card shadow">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span class="fw-bold">
+                            Lọc sản phẩm
+                        </span>
+                        <button class="btn product-bg-primary text-white">
+                            Tìm kiếm
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <p>Tìm theo loại sản phẩm:</p>
+                            <div class="list-group">
+                                @foreach (var category in ViewBag.CategoryList)
+                                {
+                                    <label class="list-group-item">
+                                        <input class="form-check-input me-1"
+                                               type="checkbox"
+                                               name="categoryFilter"
+                                               value="@category.Id"
+                                        @(Context.Request.Query["categoryFilter"].ToString().Contains(category.Id.ToString()) ? "checked" : "") />
+                                        @category.Name
+                                    </label>
+                                }
+                            </div>
+                        </div>
+                        <div>
+                            <p class="mt-3">Lọc theo yêu cầu khác: (nếu có)</p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-12 col-lg-9">
+                <div class="row my-3 justify-content-end">
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <select class="form-select" onChange="HandleSortProduct(event)" aria-label="Sort select">
+                            <option value="acs" selected>---Sắp xếp theo---</option>
+                            <option value="asc">Giá từ thấp đến cao</option>
+                            <option value="desc">Giá từ cao đến thấp</option>
+                            <option value="best">Đánh giá tốt nhất</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    @foreach (var item in Model)
+                    {
+                        <div class="col-6 col-lg-4 mb-4">
+                            <div class="card shadow rounded-3">
+                                <img src="https://picsum.photos/200/300" class="card-img-top product-image-height rounded-top" alt="Hình ảnh sản phẩm">
+
+                                <div class="card-body border-top border-gray-300">
+                                    <h3 class="fs-5 fw-bold">@item.Product.Name</h3>
+                                    <h5 class="h6 fw-semibold text-gray mt-2 product-truncate-text">@item.Product.Description</h5>
+                                    <div>
+                                        <span class="h6 mb-0 text-decoration-line-through me-2 text-gray">
+                                            @item.Product.UnitPrice.ToString("#,###") đ
+                                        </span>
+                                        @* Cần xử lý giá giảm ở đây, hiện tại chỉ hiển thị tạm *@
+                                        <span class="h5 mb-0 text-danger">@item.Product.UnitPrice.ToString("#,###") đ</span>
+                                    </div>
+                                    <div class="d-flex mt-3">
+                                        @{
+                                            int numberOfStar = (int)item.AvgRating;
+                                        }
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (i <= numberOfStar)
+                                            {
+                                                <span class="star fas fa-star text-warning me-1"></span>
+                                            }
+                                            else
+                                            {
+                                                <span class="star fas fa-star text-gray me-1"></span>
+                                            }
+                                        }
+
+                                        <span class="badge ms-2 text-dark-gray">@item.AvgRating</span>
+                                    </div>
+
+                                </div>
+                                <div class="card-footer bg-gray-200 border-top border-gray-300 p-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-auto">
+                                            <button onClick="AddToHeartList('heart_icon_@item.Product.Id')" class="btn product-heart-btn px-1 fs-4" id="heart_icon_@item.Product.Id" type="button" aria-label="Thêm vào danh sách yêu thích" title="Thêm vào danh sách yêu thích">
+                                                <i aria-hidden="true" class="far fa-heart"></i>
+                                            </button>
+                                        </div>
+                                        <a class="btn btn-success rounded-3" asp-action="Details" asp-controller="Product" asp-route-id="@item.Product.Id">Chi tiết</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item"><a class="page-link" href="#">Trang trước</a></li>
+                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" href="#">Trang sau</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <script src="~/js/product.js"></script>
+}
