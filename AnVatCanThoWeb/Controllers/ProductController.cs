@@ -35,6 +35,17 @@ namespace AnVatCanThoWeb.Controllers
             return str2;
         }
 
+        private double AvgRatingStar(Product product)
+        {
+            double sum = 0;
+            
+            foreach (var starItem in product.Ratings)
+            {
+                sum += starItem.Star;
+            }
+            return sum / product.Ratings.Count;
+        }
+
         public ProductController(ApplicationDbContext db)
         {
             _db = db;
@@ -43,26 +54,19 @@ namespace AnVatCanThoWeb.Controllers
         // GET: /product (list all product)
         public IActionResult Index(string[]? categoryFilter, string? sort, string? search, int page)
         {
-            List<Product> productList = _db.Products.Include(o => o.Ratings).ToList();
+            List<Product> productList = _db.Products.Include(o => o.Ratings).Include(p => p.SnackBar).ToList();
             List<ProductCategory> categoryList = _db.ProductCategories.ToList();
             List<ProductVM> productVM = new List<ProductVM>();
-            
-            const int PER_PAGE = 1;
-            
-            foreach (var product in productList)
+
+            const int PER_PAGE = 9;
+
+            foreach (Product product in productList)
             {
-                double sum = 0;
-                int count = 0;
-                foreach (var starItem in product.Ratings)
-                {
-                    sum += starItem.Star;
-                    count++;
-                }
 
                 productVM.Add(new ProductVM()
                 {
                     Product = product,
-                    AvgRating = sum / product.Ratings.Count
+                    AvgRating = AvgRatingStar(product)
                 });
 
             }
@@ -88,7 +92,7 @@ namespace AnVatCanThoWeb.Controllers
             }
 
             // Tìm tên của sản phẩm
-            if(!string.IsNullOrEmpty(search))
+            if (!string.IsNullOrEmpty(search))
             {
                 productVM = productVM.Where(delegate (ProductVM pVM)
                 {
@@ -102,7 +106,7 @@ namespace AnVatCanThoWeb.Controllers
             }
 
             // Tổng số trang (Phân trang)
-            ViewBag.TotalPage = productVM.Count;
+            ViewBag.TotalPage = (int)Math.Ceiling((decimal)productVM.Count / PER_PAGE);
 
             // Phân trang
             if (page <= 0)
@@ -118,6 +122,62 @@ namespace AnVatCanThoWeb.Controllers
             ViewBag.CategoryList = categoryList;
 
             return View(productVM);
+        }
+
+        public IActionResult Details(int? id)
+        {
+            const int RELATED_PRODUCT_NUMBER = 4;
+            List<ProductVM> relatedProductsVM = new List<ProductVM>();
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Product product = _db.Products
+                .Include(p => p.Comments)
+                .Include(p => p.ProductImages)
+                .Include(p => p.Ratings)
+                .Include(p => p.SnackBar)
+                    .ThenInclude(s => s.Addresses)
+                .FirstOrDefault(p => p.Id == id);
+
+            if (product is null)
+            {
+                return NotFound();
+            }
+
+            // Chi tiết sản phẩm chính
+            ProductVM productVM = new ProductVM()
+            {
+                Product = product,
+                AvgRating = AvgRatingStar(product)
+            };
+
+            // Những sản phẩm có liên quan
+            List<Product> relatedProducts = _db.Products
+                .Include(p => p.Ratings)
+                .Where(p => p.ProductCategoryId == product.ProductCategoryId)
+                .Take(RELATED_PRODUCT_NUMBER)
+                .ToList();
+
+            foreach (Product relatedProduct in relatedProducts)
+            {
+                relatedProductsVM.Add(new ProductVM()
+                {
+                    Product = relatedProduct,
+                    AvgRating = AvgRatingStar(relatedProduct)
+                });
+            }
+
+            // Dữ liệu View Model
+            DetailProductVM detailProductVM = new DetailProductVM()
+            {
+                ProductVM = productVM,
+                RelatedProduct = relatedProductsVM
+            };
+
+            return View(detailProductVM);
         }
 
         public IActionResult GetAllProduct()
