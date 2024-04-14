@@ -1,0 +1,49 @@
+﻿@model IEnumerable<AnVatCanTho.Models.ProductImage>
+
+@{
+    ViewData["Title"] = "EditProductImages";
+    Layout = "~/Areas/SnackBar/Views/Shared/_Layout.cshtml";
+}
+
+<h1>EditProductImages</h1>
+
+<p>
+    @Html.ActionLink("Thêm ảnh", "CreateProductImages", new { id = ViewData["id"] })
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Hỉnh ảnh
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SnackBarId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductId)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                <img src="@Url.Content("~/images/Products/" + item.PathName)" width="45" />
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SnackBarId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductId)
+            </td>
+            <td>
+                @Html.ActionLink("Delete", "DeleteProductImage", new { id=item.PathName })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+<div>
+    @Html.ActionLink("Back to EditProduct", "EditProduct", new {  id = ViewData["id"]})
+</div>
