@@ -8,9 +8,11 @@ public class LoginViewModelValidator : AbstractValidator<LoginViewModel>
     {
         RuleFor(x => x.Email)
             .EmailAddress()
-            .NotEmpty();
+            .NotEmpty()
+            .WithMessage("Trường địa chỉ email không được trống!");
 
         RuleFor(x => x.Password)
-            .NotEmpty();
+            .NotEmpty()
+            .WithMessage("Trường mật khẩu không được trống!");
     }
 }

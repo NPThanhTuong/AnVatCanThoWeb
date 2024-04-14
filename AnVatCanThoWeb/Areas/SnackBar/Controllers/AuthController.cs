@@ -40,7 +40,6 @@ public class AuthController : Controller
 
         if (user is null || !BCrypt.Net.BCrypt.Verify(loginVm.Password, user.Password))
         {
-            ViewData["ThongBao"] = "Email hoặc mật khẩu không đúng!";
             return View(loginVm);
         }
 
