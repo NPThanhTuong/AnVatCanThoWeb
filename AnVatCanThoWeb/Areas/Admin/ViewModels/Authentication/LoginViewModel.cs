@@ -4,6 +4,6 @@ namespace AnVatCanThoWeb.Areas.Admin.ViewModels.Authentication;
 
 public record LoginViewModel(
     [DataType(DataType.EmailAddress)]
-    string Email, 
+    string? Email, 
     [DataType(DataType.Password)]
-    string Password);
+    string? Password);
