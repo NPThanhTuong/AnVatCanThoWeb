@@ -8,13 +8,13 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/AnVatCanThoWeb.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-
     <!-- Libraries Stylesheet -->
     <link href="~/lib/animate/animate.min.css" rel="stylesheet">
     <link href="~/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-
     <!-- Customized Bootstrap Stylesheet -->
     <link href="~/css/bootstrap.min.css" rel="stylesheet">
+  
+    @RenderSection("Styles", required: false)
 </head>
 <body>
     <header class="header">
@@ -46,11 +46,12 @@
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+    
+    @RenderBody()
+    @* <div class="container">
+    <main role="main" class="pb-3">
+    </main>
+    </div> *@
 
     <footer class="footer1">
         <div class="container-fluid bg-dark text-light wow fadeIn" style="padding-bottom: 25px;" data-wow-delay="0.1s">
@@ -58,7 +59,7 @@
                 <div class="row g-5">
                     <div class="col-lg-3 col-md-6">
                         <h4 class="section-title ff-secondary text-start fw-normal mb-4" style="color: #FEA116;">Company</h4>
-                        <a class="btn btn__company" href="" style="color: #FFF;">About Us</a><br/>
+                        <a class="btn btn__company" href="" style="color: #FFF;">About Us</a><br />
                         <a class="btn btn__company" href="" style="color: #FFF;">Contact Us</a><br />
                         <a class="btn btn__company" href="" style="color: #FFF;">Reservation</a><br />
                         <a class="btn btn__company" href="" style="color: #FFF;">Privacy Policy</a><br />
