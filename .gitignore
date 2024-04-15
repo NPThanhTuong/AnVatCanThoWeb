@@ -365,3 +365,4 @@ FodyWeavers.xsd
 .idea
 
 appsettings.Development.json
+/AnVatCanThoWeb/Areas/SnackBar/Views/Order/Index.cshtml
