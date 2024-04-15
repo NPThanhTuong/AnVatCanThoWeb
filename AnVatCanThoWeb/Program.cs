@@ -33,7 +33,13 @@ var builder = WebApplication.CreateBuilder(args);
             options.ExpireTimeSpan = TimeSpan.FromMinutes(30); 
             options.SlidingExpiration = true;
             options.LoginPath = new PathString("/SnackBar/Auth/Login");
-        });;
+        })
+        .AddCookie(ApplicationAuthenticationScheme.UserScheme, options =>
+        {
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+            options.SlidingExpiration = true;
+            options.LoginPath = new PathString("/Auth/Login");
+        });
     builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
     builder.Services.AddFluentValidationClientsideAdapters();
