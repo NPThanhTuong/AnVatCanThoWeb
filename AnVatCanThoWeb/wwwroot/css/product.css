@@ -85,6 +85,16 @@
    
 }
 
+.review-box_label {
+    width: 100px;
+}
+
+.comment_avatar-user {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    object-fit: contain;
+}
 
 /*End product detail*/
 

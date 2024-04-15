@@ -1,10 +1,46 @@
 ﻿@using AnVatCanThoWeb.ViewModels
+@using System.Security.Claims
 
 @model DetailProductVM
 
 @{
     ProductVM productVM = Model.ProductVM;
     List<ProductVM> relatedProductVM = Model.RelatedProduct;
+
+    int totalOfRating = productVM.Product.Ratings.Count;
+
+    Dictionary<string, int> reviewBullet = new Dictionary<string, int>();
+    reviewBullet.Add("Rất ngon", 0);
+    reviewBullet.Add("Ngon", 0);
+    reviewBullet.Add("Bình thường", 0);
+    reviewBullet.Add("Tệ", 0);
+    reviewBullet.Add("Rất tệ", 0);
+
+
+    // Chỉ xử lý cho đánh giá số sao là số nguyên
+    foreach (var ratingItem in productVM.Product.Ratings)
+    {
+        if (ratingItem.Star == 1.0)
+        {
+            reviewBullet["Rất tệ"]++;
+        }
+        else if (ratingItem.Star == 2.0)
+        {
+            reviewBullet["Tệ"]++;
+        }
+        else if (ratingItem.Star == 3.0)
+        {
+            reviewBullet["Bình thường"]++;
+        }
+        else if (ratingItem.Star == 4.0)
+        {
+            reviewBullet["Ngon"]++;
+        }
+        else if (ratingItem.Star == 5.0)
+        {
+            reviewBullet["Rất ngon"]++;
+        }
+    }
 }
 
 <main class="bg-gray">
@@ -83,14 +119,14 @@
 
 
                     <p class="text-muted mt-3 product-truncate-text--4">
-                        @productVM.Product.Description 
-                        It is a long established fact that a reader will be distracted by the readable 
-                        content of a page when looking at its layout. The point of using Lorem Ipsum is 
-                        that it has a more-or-less normal distribution of letters, as opposed to using 
-                        'Content here, content here', making it look like readable English. Many desktop 
-                        publishing packages and web page editors now use Lorem Ipsum as their default 
-                        model text, and a search for 'lorem ipsum' will uncover many web sites still in 
-                        their infancy. Various versions have evolved over the years, sometimes by 
+                        @productVM.Product.Description
+                        It is a long established fact that a reader will be distracted by the readable
+                        content of a page when looking at its layout. The point of using Lorem Ipsum is
+                        that it has a more-or-less normal distribution of letters, as opposed to using
+                        'Content here, content here', making it look like readable English. Many desktop
+                        publishing packages and web page editors now use Lorem Ipsum as their default
+                        model text, and a search for 'lorem ipsum' will uncover many web sites still in
+                        their infancy. Various versions have evolved over the years, sometimes by
                         accident, sometimes on purpose (injected humour and the like).
                     </p>
 
@@ -112,7 +148,7 @@
 
                     <div class="mt-3 d-flex align-items-center">
                         <span class="fw-bold text-muted">Số lượng: </span>
-                        <input class="form-control w-25 ms-2" type="number" name="quantity" min="1" max="50" />
+                        <input class="form-control w-25 ms-2" type="number" name="quantity" min="1" max="50" placeholder="1" />
                     </div>
 
                     <div class="mt-5 d-flex align-items-center gap-4">
@@ -187,13 +223,105 @@
             </div>
         </div>
 
-        <h4>Đánh giá</h4>
-        <div class="row mt-4">
-            <div class="col-12 col-lg-3">
-                @* Rating *@
-            </div>
-            <div class="col-12 col-lg-9">
-                @* Bình luận *@
+
+
+        <div class="card shadow border-white p-4 mt-4">
+            <h4>Đánh giá</h4>
+            <div class="row mt-4">
+                <div class="col-12 col-lg-3">
+                    @* Rating *@
+                    <div class="d-flex align-items-center mt-3">
+                        <div class="d-flex align-items-center">
+                            @{
+                                numberOfStar = (int)productVM.AvgRating;
+                            }
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= numberOfStar)
+                                {
+                                    <span class="star fas fa-star text-warning me-1"></span>
+                                }
+                                else
+                                {
+                                    <span class="star fas fa-star text-gray me-1"></span>
+                                }
+                            }
+
+                            <span class="ms-2 text-decoration-underline text-dark-gray">@productVM.AvgRating</span>
+                        </div>
+
+                        <span class="vertical-divider"></span>
+
+                        <p class="my-0">@productVM.Product.Ratings.Count đánh giá</p>
+                    </div>
+
+                    <div>
+                        @foreach (KeyValuePair<string, int> kvp in reviewBullet)
+                        {
+                            <div class="d-flex align-items-center mt-3">
+                                <span class="review-box_label">@kvp.Key</span>
+                                <span class="text-muted me-2">@kvp.Value</span>
+                                <div class="progress flex-grow-1">
+                                    <div class="progress-bar bg-warning"
+                                         role="progressbar"
+                                         style="width: @((kvp.Value / totalOfRating) * 100)%"
+                                         aria-valuenow="@((kvp.Value / totalOfRating) * 100)"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-9">
+                    <div class="row my-3">
+                        <span class="col-3 fw-bold text-center fs-4">@productVM.Product.Comments.Count bình luận</span>
+                        <div class="col-3">
+                            <select class="form-select" aria-label="Sort comment">
+                                <option selected>Sắp xếp theo</option>
+                                <option value="desc">Mới nhất</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <img src="https://picsum.photos/100/100" alt="avatar user" class="comment_avatar-user" />
+                        <form class="flex-grow-1">
+                            <input name="productId" value="@productVM.Product.Id" hidden />
+                            <input name="snackBarId" value="@productVM.Product.SnackBarId" hidden />
+                            <input name="productId" value="@productVM.Product.Id" hidden />
+                            <div class="input-group">
+                                <textarea class="form-control"
+                                          name="comment"
+                                          aria-label="Comment for product"
+                                          aria-describedby="submit-comment-btn"
+                                          placeholder="Viết bình luận..."
+                                          required></textarea>
+                                <button type="submit" class="btn btn-primary" id="submit-comment-btn">Bình luận</button>
+                            </div>
+                        </form>
+
+                    </div>
+                    <hr />
+                    <div>
+                        @foreach (var comment in productVM.Product.Comments)
+                        {
+                            <div class="d-flex align-items-start gap-3">
+                                <img src="https://picsum.photos/100/100" class="comment_avatar-user" alt="avatar user" />
+                                <div>
+                                    <div class="d-flex align-items-center">
+                                        <h5 class="fs-6 fw-bold mb-0 me-2">@comment.Customer.DisplayName</h5>
+                                        <span class="fs-6 fw-light text-muted">5 tháng trước</span>
+                                    </div>
+                                    <p class="mt-1">
+                                        @comment.Content Someone singing on top of this as well while using the voice don’t let me down as a back ground ting would be sick
+                                    </p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
             </div>
         </div>
     </div>

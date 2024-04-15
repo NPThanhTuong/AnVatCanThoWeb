@@ -136,6 +136,7 @@ namespace AnVatCanThoWeb.Controllers
 
             Product product = _db.Products
                 .Include(p => p.Comments)
+                    .ThenInclude(c => c.Customer)
                 .Include(p => p.ProductImages)
                 .Include(p => p.Ratings)
                 .Include(p => p.SnackBar)
