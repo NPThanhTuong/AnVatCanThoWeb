@@ -32,15 +32,16 @@
                     <form asp-action="Login" asp-controller="Auth" method="post">
                         <input value="@ViewBag.ReturnUrl" name="ReturnUrl" hidden />
                         <div class="form-floating mb-3">
-                            <input asp-for="Email" type="email" class="form-control" id="floatingInput" placeholder="name@example.com" required>
+                            <input asp-for="Email" type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
                             <label asp-for="Email" for="floatingInput">Địa chỉ email</label>
                             <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
                         <div class="form-floating">
-                            <input asp-for="Password" type="password" class="form-control" id="floatingPassword" placeholder="Mật khẩu" required>
+                            <input asp-for="Password" type="password" class="form-control" id="floatingPassword" placeholder="Mật khẩu">
                             <label asp-for="Password" for="floatingPassword">Mật khẩu</label>
                             <span asp-validation-for="Password" class="text-danger"></span>
                         </div>
+                        <span class="text-danger">@ViewBag.ThongBao</span>
                         <div class="d-flex justify-content-between mt-2 text-decoration-underline text-primary">
                             <a asp-action="ForgotPassword" asp-controller="Auth">Quên mật khẩu?</a>
                             <a asp-action="SignUp" asp-controller="Auth">Đăng ký ngay</a>
