@@ -5,28 +5,31 @@
     Layout = "~/Areas/SnackBar/Views/Shared/_Layout.cshtml";
 }
 
-<h1>CreateProductImages</h1>
+<div class="container">
+<div class="row justify-content-center">
+    <div class="col-md-6">
+            <h1>Thêm hình ảnh sản phẩm</h1>
 
-<h4>ProductImage</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="CreateProductImages" asp-controller="Products" method="post" enctype="multipart/form-data">
+            <h4>Hình ảnh sản phẩm</h4>
+            <hr />
+        <form asp-action="CreateProductImages" asp-controller="Products" method="post" enctype="multipart/form-data" class="row g-3">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="PathName" class="control-label"></label>
+            <div class="form-group col-12">
+                <label asp-for="PathName" class="control-label">Chọn hình ảnh</label>
                 <input asp-for="PathName" class="form-control" type="file" name="fileUploads" multiple />
                 @ViewBag.ThongBao
                 <span asp-validation-for="PathName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Thêm" class="btn btn-primary" />
+                <span>
+                    <a href="@Url.Action("EditProductImages","Products", new { id = ViewData["id"] })" class="btn btn-danger hover">
+                        <i class="fa-solid fa-arrow-left">Trở về</i>
+                    </a>
+                </span>
             </div>
         </form>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 

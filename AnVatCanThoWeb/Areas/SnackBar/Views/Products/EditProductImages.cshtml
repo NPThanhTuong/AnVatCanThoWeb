@@ -5,12 +5,15 @@
     Layout = "~/Areas/SnackBar/Views/Shared/_Layout.cshtml";
 }
 
-<h1>EditProductImages</h1>
+<div class="container">
+<h1>Chỉnh sửa hình ảnh sản phẩm</h1>
 
 <p>
-    @Html.ActionLink("Thêm ảnh", "CreateProductImages", new { id = ViewData["id"] })
+    <a href="@Url.Action("CreateProductImages","Products", new { id = ViewData["id"] })" class="btn btn-primary hover">
+            <i class="fa-solid fa-plus">Thêm</i>
+    </a>
 </p>
-<table class="table">
+    <table class="table mx-auto border table-striped">
     <thead>
         <tr>
             <th>
@@ -38,12 +41,17 @@
                 @Html.DisplayFor(modelItem => item.ProductId)
             </td>
             <td>
-                @Html.ActionLink("Delete", "DeleteProductImage", new { id=item.PathName })
+                <a href="@Url.Action("DeleteProductImage","Products", new { id = item.PathName })" class="btn btn-danger hover">
+                    <i class="fa-solid fa-trash">Xóa</i>
+                </a>
             </td>
         </tr>
 }
     </tbody>
 </table>
 <div>
-    @Html.ActionLink("Back to EditProduct", "EditProduct", new {  id = ViewData["id"]})
+     <a href="@Url.Action("EditProduct","Products", new { id = ViewData["id"] })" class="btn btn-danger hover">
+            <i class="fa-solid fa-arrow-left">Trở về</i>
+     </a>
+</div>
 </div>

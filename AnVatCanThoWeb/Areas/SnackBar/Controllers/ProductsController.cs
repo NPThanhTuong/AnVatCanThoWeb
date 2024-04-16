@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Authorization;
 using AnVatCanThoWeb.Common.Authentication;
 using System.Security.Claims;
 using AnVatCanTho.Models;
+using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using AnVatCanThoWeb.Areas.SnackBar.ViewModels.Product;
 
 namespace AnVatCanThoWeb.Areas.SnackBar.Controllers;
 
@@ -22,6 +25,15 @@ public class ProductsController : Controller
         _dbContext = dbContext;
         _env = env;
     }
+    //Random chuoi ki tu
+    private static Random random = new Random();
+    private const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    public static string GenerateRandomString(int length)
+    {
+        return new string(Enumerable.Repeat(chars, length)
+            .Select(s => s[random.Next(s.Length)]).ToArray());
+    }
     public async Task<IActionResult> Index()
     {
         int userId = int.Parse(User.Claims.First(c => c.Type == ClaimTypes.Sid).Value);
@@ -31,7 +43,7 @@ public class ProductsController : Controller
             .ToListAsync();
         return View(products);
     }
-    public async Task<IActionResult> CreateProductAsync()
+    public async Task<IActionResult> CreateProduct()
     {
         var categories = await _dbContext.ProductCategories.ToListAsync();
         var selectList = categories
@@ -42,19 +54,33 @@ public class ProductsController : Controller
 
     [HttpPost,ActionName("CreateProduct")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> CreateProduct(Product product, IFormFileCollection fileUploads, ProductImage productImage)
+    public async Task<IActionResult> CreateProduct(CreateProductViewModel vm, IFormFileCollection fileUploads, ProductImage productImage)
     {
-        if(ModelState.IsValid)
+        int userId = int.Parse(User.Claims.First(c => c.Type == ClaimTypes.Sid).Value);
+        var categories = await _dbContext.ProductCategories.ToListAsync();
+        var selectList = categories
+            .Select(x => new SelectListItem(text: x.Name, value: x.Id.ToString()));
+        ViewBag.Categories = selectList;
+        if (ModelState.IsValid)
         {
-            int userId = int.Parse(User.Claims.First(c => c.Type == ClaimTypes.Sid).Value);
-            product.SnackBarId = userId;
+            var product = new Product 
+            {
+                SnackBarId = userId,
+                Stock = (int)vm.Stock,
+                Name = vm.Name,
+                Description = vm.Description,
+                UnitPrice = (int)vm.UnitPrice,
+                ProductCategoryId = vm.ProductCategoryId,
+                Ingredient = vm.Ingredient
+            };
             _dbContext.Products.Add(product);
             await _dbContext.SaveChangesAsync();
             if (fileUploads != null)
             {
-                foreach (var fileUpload in fileUploads) {
-                    var fileName = Path.GetFileName(fileUpload.FileName);
-                    var filePath = Path.Combine(_env.WebRootPath,"images/Products", fileName);
+                foreach (var fileUpload in fileUploads)
+                {
+                    var fileName = GenerateRandomString(10) + "-" + Path.GetFileName(fileUpload.FileName);
+                    var filePath = Path.Combine(_env.WebRootPath, "images/Products", fileName);
                     if (System.IO.File.Exists(filePath))
                     {
                         ViewBag.ThongBao = "Hình ảnh đã tồn tại";
@@ -71,39 +97,62 @@ public class ProductsController : Controller
                     {
                         SnackBarId = userId,
                         ProductId = product.Id,
-                        PathName = fileUpload.FileName
+                        PathName = fileName
                     };
                     _dbContext.ProductImages.Add(producimage);
                 }
             }
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(); 
             return RedirectToAction(nameof(Index), product);
         }
-        return View(product);
+        return View(vm);
     }
 
     [HttpGet]
     public async Task<IActionResult> EditProduct(int? id)
     {
-        if(id == null)
+        int userId = int.Parse(User.Claims.First(c => c.Type == ClaimTypes.Sid).Value);
+        ViewData["snackbarid"] = userId;
+        if (id == null)
         {
             return NotFound();
         }
+        var categories = await _dbContext.ProductCategories.ToListAsync();
+        var selectList = categories
+            .Select(x => new SelectListItem(text: x.Name, value: x.Id.ToString()));
+        ViewBag.Categories = selectList;
         var product = await _dbContext.Products
-            .Where(p => p.Id == id)
-            .FirstOrDefaultAsync();
+            .Include(p => p.SnackBar)
+            .FirstOrDefaultAsync(p => p.Id == id);
         if(product == null)
         {
             return NotFound();
         }
-        return View(product);
+        var vm = new CreateProductViewModel
+        {
+            Id = product.Id,
+            Name = product.Name,
+            Description = product.Description,
+            Ingredient = product.Ingredient,
+            ProductCategoryId = product.ProductCategoryId,
+            Stock = product.Stock,
+            UnitPrice = product.UnitPrice,
+            SnackBarId = product.SnackBarId,
+        };
+        return View(vm);
     }
 
     [HttpPost, ActionName("EditProduct")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> EditProduct(int id, Product product)
+    public async Task<IActionResult> EditProduct(int id, CreateProductViewModel vm)
     {
-        if(id != product.Id)
+        var categories = await _dbContext.ProductCategories.ToListAsync();
+        var selectList = categories
+            .Select(x => new SelectListItem(text: x.Name, value: x.Id.ToString()));
+        ViewBag.Categories = selectList;
+        int userId = int.Parse(User.Claims.First(c => c.Type == ClaimTypes.Sid).Value);
+        ViewData["snackbarid"] = userId;
+        if (id != vm.Id)
         {
             return NotFound();
         }
@@ -111,7 +160,18 @@ public class ProductsController : Controller
         {
             try
             {
-                _dbContext.Products.Update(product);
+                var product = await _dbContext.Products.FirstOrDefaultAsync(x => x.Id == id);
+                if (product == null) 
+                {
+                    return NotFound();
+                }
+                product.SnackBarId = userId;
+                product.Description = vm.Description;
+                product.Ingredient = vm.Ingredient;
+                product.ProductCategoryId = vm.ProductCategoryId;
+                product.Stock = (int)vm.Stock;
+                product.UnitPrice = (int)vm.UnitPrice;
+                product.Name = vm.Name;
                 await _dbContext.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -120,7 +180,7 @@ public class ProductsController : Controller
             }
             return RedirectToAction(nameof(Index));
         }
-        return View(product);
+        return View(vm);
     }
 
     [HttpGet]    
@@ -146,6 +206,7 @@ public class ProductsController : Controller
     public async Task<ActionResult> Delete(int id)
     {
         var product = await _dbContext.Products
+            .Include(p => p.ProductCategory)
             .SingleOrDefaultAsync(p => p.Id == id);
         if(product == null)
         {
@@ -165,8 +226,25 @@ public class ProductsController : Controller
             Response.StatusCode = 404;
             return null;
         }
+        int userId = int.Parse(User.Claims.First(c => c.Type == ClaimTypes.Sid).Value);
+        var producimages = await _dbContext.ProductImages
+            .Where(p => p.SnackBarId == userId && p.ProductId == id)
+            .ToListAsync();
+        var productImages = product.ProductImages;
+        foreach (var producImage in productImages) {
+            string filePath = Path.Combine(_env.WebRootPath, "images/Products", producImage.PathName);
+            if (System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath);
+            }
+        }
+        foreach(var producimage in producimages)
+        {
+            _dbContext.ProductImages.Remove(producimage);
+            await _dbContext.SaveChangesAsync();
+        }
         _dbContext.Products.Remove(product);
-        _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync();
         return RedirectToAction("Index");
     }
     [HttpGet]
@@ -206,14 +284,16 @@ public class ProductsController : Controller
         _dbContext.SaveChangesAsync();
         return RedirectToAction("EditProductImages", new {id = productImage.ProductId});
     }
-    public ActionResult CreateProductImages()
+    public ActionResult CreateProductImages(int id)
     {
+        ViewData["id"] = id;
         return View();
     }
     [HttpPost,ActionName("CreateProductImages")]
     [ValidateAntiForgeryToken]
     public async Task<ActionResult> CreateProductImages(int id,IFormFileCollection fileUploads, ProductImage productImage)
     {
+        ViewData["id"] = id;
         if(ModelState.IsValid)
         {
             int userId = int.Parse(User.Claims.First(c => c.Type == ClaimTypes.Sid).Value);
@@ -221,7 +301,7 @@ public class ProductsController : Controller
             {
                 foreach (var fileUpload in fileUploads)
                 {
-                    var fileName = Path.GetFileName(fileUpload.FileName);
+                    var fileName = GenerateRandomString(10) + "-" + Path.GetFileName(fileUpload.FileName);
                     var filePath = Path.Combine(_env.WebRootPath, "images/Products", fileName);
                     if (System.IO.File.Exists(filePath))
                     {
@@ -237,13 +317,13 @@ public class ProductsController : Controller
                     }
                     productImage.ProductId = id;
                     productImage.SnackBarId = userId;
-                    productImage.PathName = fileUpload.FileName;
+                    productImage.PathName = fileName;
                     _dbContext.ProductImages.Add(productImage);
                     await _dbContext.SaveChangesAsync();
                 }
                 return RedirectToAction("EditProductImages", new { id = id});
             }
         }
-        return View(productImage);
+        return View();
     }
 }
