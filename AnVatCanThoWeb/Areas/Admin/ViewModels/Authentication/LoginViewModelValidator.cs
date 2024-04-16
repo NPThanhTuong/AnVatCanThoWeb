@@ -7,8 +7,10 @@ public class LoginViewModelValidator : AbstractValidator<LoginViewModel>
     public LoginViewModelValidator()
     {
         RuleFor(x => x.Email)
+            .NotEmpty()
+            .WithMessage(errorMessage: "Email is required")
             .EmailAddress()
-            .NotEmpty();
+            .WithMessage(errorMessage: "Must be an email");
         
         RuleFor(x => x.Password)
             .NotEmpty();
