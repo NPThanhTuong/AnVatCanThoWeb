@@ -5,7 +5,7 @@
             <div class="col-lg-4">
                 <div class="card mb-4">
                     <div class="card-body text-center">
-                        <img src="https://static2-images.vnncdn.net/files/publish/2022/12/8/meo-1-1416.jpg" alt="avatar"
+                        <img src="~/images/SnackBar/@Model.Avatar" alt="avatar"
                              class="rounded-circle img-fluid" style="width: 150px; hight: 150px">
                         <h5 class="my-3">@Model.DisplayName</h5>
                         <p class="text-muted mb-1">@Model.Description</p>
@@ -47,7 +47,7 @@
                                 <p class="mb-0">Ngày sinh</p>
                             </div>
                             <div class="col-sm-9">
-                                <p class="text-muted mb-0">@Model.Dob</p>
+                                <p class="text-muted mb-0">@Model.Dob.ToString("d")</p>
                             </div>
                         </div>
                         <hr>
