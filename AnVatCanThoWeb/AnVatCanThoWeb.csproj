@@ -18,11 +18,16 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+<<<<<<< HEAD
+=======
 
+>>>>>>> 10a0588b38d63dbefaea4dec7247668978ae69e8
     <PackageReference Include="PusherServer" Version="5.0.0" />
-
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
+<<<<<<< HEAD
+=======
 
+>>>>>>> 10a0588b38d63dbefaea4dec7247668978ae69e8
   </ItemGroup>
 
   <ItemGroup>

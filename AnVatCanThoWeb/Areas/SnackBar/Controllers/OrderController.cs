@@ -1,4 +1,5 @@
 ﻿using AnVatCanTho.DataAccess.Data;
+using AnVatCanTho.Models;
 using AnVatCanThoWeb.Areas.SnackBar.Common;
 
 using AnVatCanThoWeb.Common.Authentication;
@@ -11,10 +12,10 @@ namespace AnVatCanThoWeb.Areas.SnackBar.Controllers;
 
 [Area(SnackbarAreaName.VALUE)]
 [Authorize(AuthenticationSchemes = ApplicationAuthenticationScheme.SnackBarScheme)]
-public class HomeController : Controller
+public class OrderController : Controller
 {
     private readonly ApplicationDbContext _db;
-    public HomeController(ApplicationDbContext db)
+    public OrderController(ApplicationDbContext db)
     {
         _db = db;
     }
@@ -26,11 +27,14 @@ public class HomeController : Controller
         {
             return BadRequest("ID người dùng không hợp lệ.");
         }
-        var snackBar = await _db.SnackBars.Include(s => s.Addresses).FirstOrDefaultAsync(s => s.Id == snackBarId);
-        if (snackBar == null)
-        {
-            return NotFound();
-        }
-        return View(snackBar);
+        var OrderId = await _db.OrderDetails.Where(od => od.SnackBarId == snackBarId).Select(od => od.OrderId).ToListAsync();
+
+        var Orders = await _db.Orders.Include(o => o.Customer).Where(o => OrderId.Contains(o.Id)).ToListAsync();
+        return View(Orders);
+    }
+    public async Task<IActionResult> OrderDetail(int Id)
+    {
+        var OrderDetail = await _db.OrderDetails.Include(od => od.Product).Where(od => od.OrderId == Id).ToListAsync();
+        return View(OrderDetail);
     }
 }

@@ -48,6 +48,7 @@ public class AuthController : Controller
             new Claim(ClaimTypes.Email, loginVm.Email),
             new Claim(ClaimTypes.Role, "SnackBar"),
             new Claim(ClaimTypes.Sid, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.DisplayName),
         };
 
         var claimsIdentity = new ClaimsIdentity(claims, ApplicationAuthenticationScheme.SnackBarScheme);

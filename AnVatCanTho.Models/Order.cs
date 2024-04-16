@@ -13,6 +13,7 @@ namespace AnVatCanTho.Models
         public int Id { get; set; }
 
         public int CustomerId { get; set; }
+        [DisplayName("Khách hàng")]
         public Customer Customer { get; set; } = null!;
 
         [DisplayName("Tổng tiền")]
