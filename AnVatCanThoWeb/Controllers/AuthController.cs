@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using System.Security.Principal;
 
 namespace AnVatCanThoWeb.Controllers
 {
@@ -58,6 +59,10 @@ namespace AnVatCanThoWeb.Controllers
                 IsPersistent = false,
                 AllowRefresh = true,
             };
+
+            // Gán user đã login
+            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+            Thread.CurrentPrincipal = claimsPrincipal;
 
             await HttpContext.SignInAsync(
                 ApplicationAuthenticationScheme.UserScheme,

@@ -96,5 +96,18 @@
     object-fit: contain;
 }
 
+.comment-like-btn {
+    padding: 2px 4px;
+    background-color: transparent;
+    outline: none;
+    border: none;
+}
+
+.comment-like-btn:hover {
+    color: #0680fe;
+    cursor: pointer;
+    
+}
+
 /*End product detail*/
 

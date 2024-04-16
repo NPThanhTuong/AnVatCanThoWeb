@@ -41,10 +41,14 @@
             reviewBullet["Rất ngon"]++;
         }
     }
+
+    // User loggin
+    var user = User.Claims;
+    string userId = "";
 }
 
 <main class="bg-gray">
-    <div class="container py-3 ">
+    <div class="container py-5">
         <div class="row product-breadcrumb">
             <div class="col">
                 <nav aria-label="breadcrumb align-items-center">
@@ -285,38 +289,48 @@
                             </select>
                         </div>
                     </div>
-                    <div class="d-flex align-items-center gap-3">
-                        <img src="https://picsum.photos/100/100" alt="avatar user" class="comment_avatar-user" />
-                        <form class="flex-grow-1">
-                            <input name="productId" value="@productVM.Product.Id" hidden />
-                            <input name="snackBarId" value="@productVM.Product.SnackBarId" hidden />
-                            <input name="productId" value="@productVM.Product.Id" hidden />
-                            <div class="input-group">
-                                <textarea class="form-control"
-                                          name="comment"
-                                          aria-label="Comment for product"
-                                          aria-describedby="submit-comment-btn"
-                                          placeholder="Viết bình luận..."
-                                          required></textarea>
-                                <button type="submit" class="btn btn-primary" id="submit-comment-btn">Bình luận</button>
-                            </div>
-                        </form>
-
-                    </div>
+                    @if (!string.IsNullOrEmpty(userId))
+                    {
+                        <div class="d-flex align-items-center gap-3">
+                            <img src="https://picsum.photos/100/100" alt="avatar user" class="comment_avatar-user" />
+                            <form class="flex-grow-1" id="comment-form">
+                                <input name="ProductId" value="@productVM.Product.Id" hidden />
+                                <input name="SnackBarId" value="@productVM.Product.SnackBarId" hidden />
+                                <input name="CustomerId" value="@userId" hidden />
+                                <div class="input-group">
+                                    <textarea class="form-control"
+                                              name="Content"
+                                              aria-label="Comment for product"
+                                              aria-describedby="submit-comment-btn"
+                                              placeholder="Viết bình luận..."
+                                              required></textarea>
+                                    <button type="submit" class="btn btn-primary" id="submit-comment-btn">Bình luận</button>
+                                </div>
+                            </form>
+                        </div>
+                    }
                     <hr />
                     <div>
                         @foreach (var comment in productVM.Product.Comments)
                         {
-                            <div class="d-flex align-items-start gap-3">
+                            <div class="d-flex align-items-start gap-3 mt-4">
                                 <img src="https://picsum.photos/100/100" class="comment_avatar-user" alt="avatar user" />
                                 <div>
                                     <div class="d-flex align-items-center">
                                         <h5 class="fs-6 fw-bold mb-0 me-2">@comment.Customer.DisplayName</h5>
+                                        @* Thời gian đã comment (Thêm trường createdAt cho Model Comment) *@
                                         <span class="fs-6 fw-light text-muted">5 tháng trước</span>
                                     </div>
-                                    <p class="mt-1">
+                                    <p class="my-1">
                                         @comment.Content Someone singing on top of this as well while using the voice don’t let me down as a back ground ting would be sick
                                     </p>
+                                    @if (!string.IsNullOrEmpty(userId))
+                                    {
+                                        <button class="comment-like-btn text-dark-gray">
+                                            <i class="fas fa-thumbs-up"></i>
+                                            <span class="ms-1">Thích</span>
+                                        </button>
+                                    }
                                 </div>
                             </div>
                         }
@@ -332,5 +346,6 @@
 }
 
 @section Scripts {
+    <script src="https://js.pusher.com/8.0.1/pusher.min.js"></script>
     <script src="~/js/product.js"></script>
 }
