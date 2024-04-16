@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AnVatCanThoWeb.Areas.SnackBar.Controllers;
 
-[Area(SnackbarAreaName.Value)]
+[Area(SnackbarAreaName.VALUE)]
 [Authorize(AuthenticationSchemes = ApplicationAuthenticationScheme.SnackBarScheme)]
 public class HomeController : Controller
 {

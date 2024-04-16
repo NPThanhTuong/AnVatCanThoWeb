@@ -14,7 +14,7 @@ using AnVatCanThoWeb.Areas.SnackBar.ViewModels.Product;
 namespace AnVatCanThoWeb.Areas.SnackBar.Controllers;
 
 [Authorize(AuthenticationSchemes = ApplicationAuthenticationScheme.SnackBarScheme)]
-[Area(SnackbarAreaName.Value)]
+[Area(SnackbarAreaName.VALUE)]
 public class ProductsController : Controller
 {
 

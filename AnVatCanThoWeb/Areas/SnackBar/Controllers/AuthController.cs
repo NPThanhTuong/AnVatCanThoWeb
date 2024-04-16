@@ -10,7 +10,7 @@ using System.Security.Claims;
 
 namespace AnVatCanThoWeb.Areas.SnackBar.Controllers;
 
-[Area(SnackbarAreaName.Value)]
+[Area(SnackbarAreaName.VALUE)]
 public class AuthController : Controller
 {
     private readonly ApplicationDbContext _db;

@@ -2,6 +2,6 @@
 {
     public class SnackbarAreaName
     {
-        public const string Value = "SnackBar";
+        public const string VALUE = "SnackBar";
     }
 }
