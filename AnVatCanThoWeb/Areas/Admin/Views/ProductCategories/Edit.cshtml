@@ -1,0 +1,53 @@
+@model AnVatCanThoWeb.Areas.Admin.ViewModels.Category.CategoryViewModel;
+
+<h1 class="mt-4">Tables</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">
+        <a asp-action="Index" asp-controller="Home" asp-area="Admin">Trang chủ</a>
+    </li>
+    <li class="breadcrumb-item active">Danh mục sản phẩm</li>
+</ol>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <a class="btn btn-outline-danger" asp-action="Index">
+            <i class="fa-solid fa-angle-left"></i>
+            Trở về
+        </a>
+    </div>
+    <div class="card-body">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ProductTypeId" class="control-label">
+                    Kiểu sản phẩm
+                </label>
+                <select asp-for="ProductTypeId" class="form-select" asp-items="@ViewData["ProductTypes"] as IEnumerable<SelectListItem>">
+                </select>
+                <span asp-validation-for="ProductTypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-4">
+                <label asp-for="Name" class="control-label">
+                    Tên danh mục sản phẩm
+                </label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-4">
+                <label asp-for="Description" class="control-label">
+                    Mô tả danh mục sản phẩm
+                </label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-4">
+                <input type="submit" value="Sửa" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

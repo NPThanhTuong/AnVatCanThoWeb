@@ -41,7 +41,6 @@ public class AuthController : Controller
 
         if (user is null || !BCrypt.Net.BCrypt.Verify(loginVm.Password, user.Password))
         {
-            ViewData["ThongBao"] = "Email hoặc mật khẩu không đúng!";
             return View(loginVm);
         }
 
@@ -50,6 +49,7 @@ public class AuthController : Controller
             new Claim(ClaimTypes.Email, loginVm.Email),
             new Claim(ClaimTypes.Role, "SnackBar"),
             new Claim(ClaimTypes.Sid, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.DisplayName),
         };
 
         var claimsIdentity = new ClaimsIdentity(claims, ApplicationAuthenticationScheme.SnackBarScheme);

@@ -1,0 +1,54 @@
+﻿@model List<AnVatCanTho.Models.Order>
+<div class="mt-4">
+    <table class="table">
+        <tr>
+            <th>#</th>
+            <th>
+                Khách hàng
+            </th>
+            <th>
+                Tổng tiền
+            </th>
+            <th>
+                Trạng thái đơn hàng
+            </th>
+            <th>
+                Địa chỉ đơn hàng
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.Customer.DisplayName)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.Total)
+            </td>
+            <td>
+                    @if (item.Status == true)
+                    {
+                        <div class="bg-success rounded text-white text-center col-5 m-2 p-1 ">Đã xử lý</div>
+                    }else{
+                        <div class="bg-warning rounded text-white text-center col-5 m-2 p-1 ">Đang xử lý</div>
+                    }                       
+            </td>
+            <td class="col-4">
+                 <div>
+                      @Html.DisplayFor(modelItem => item.Address)
+                </div>                   
+            </td>
+            <td>
+                    @Html.ActionLink("Chi tiết", "OrderDetail", new { 
+                        Id = item.Id
+                    })
+            </td>
+        </tr>
+        }
+    </table>
+</div>
