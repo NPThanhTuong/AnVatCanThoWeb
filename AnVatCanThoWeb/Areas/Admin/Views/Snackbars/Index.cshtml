@@ -11,44 +11,42 @@
 <div class="card mb-4">
     <div class="card-header">
         <div class="d-flex align-items-center justify-content-between">
-            <form>
-                <div class="input-group rounded">
-                    <input type="search" 
+            <form
+                asp-action="Index"
+                method="get"
+                class="d-flex align-items-center gap-3">
+                <div class="input-group rounded" style="min-width: 200px">
+                    <input type="search"
                            name="keyword"
-                           class="form-control rounded" 
-                           placeholder="Tìm kiếm" 
-                           aria-label="Search" 
+                           class="form-control rounded"
+                           placeholder="Tìm kiếm"
+                           aria-label="Search"
                            value="@ViewData["CurrentKeyword"]"
                            aria-describedby="search-addon"/>
                     <button class="input-group-text border-0">
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
-            </form>
 
-            @{
-                var prevDisabled = !Model.HasPrevious ? "disabled" : "";
-                var nextDisabled = !Model.HasNext ? "disabled" : "";
-            }
-            
-            <nav aria-label="Page navigation example">
-                <ul class="pagination mb-0">
-                    <li class="page-item @prevDisabled">
-                        <a class="page-link" 
-                           asp-route-pageIndex="@(Model.PageIndex - 1)"
-                           asp-route-currentKeyword="@ViewData["CurrentKeyword"]"
-                           asp-action="Index">Trang trước</a>
-                    </li>
-                    <li class="page-item @nextDisabled">
-                        <a class="page-link" 
-                           asp-route-pageIndex="@(Model.PageIndex + 1)"
-                           asp-route-currentKeyword="@ViewData["CurrentKeyword"]"
-                           asp-action="Index">Trang kế</a>
-                    </li>
-                </ul>
-            </nav>
+                <div class="input-group">
+                    <select id="districtName" name="districtName" class="form-select">
+                        <option value="">Quận</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <select id="wardName" name="wardName" class="form-select" disabled>
+                        <option value="">Phường</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-outline-primary">
+                    Tìm
+                </button>
+            </form>
         </div>
     </div>
+
     <div class="card-body">
         <table id="my-datatable" class="display">
             <thead>
@@ -77,6 +75,38 @@
             }
             </tbody>
         </table>
+    </div>
+
+    <div class="card-footer">
+        @{
+            var prevDisabled = !Model.HasPrevious ? "disabled" : "";
+            var nextDisabled = !Model.HasNext ? "disabled" : "";
+        }
+
+        <nav aria-label="Page navigation example">
+            <ul class="pagination mb-0">
+                <li class="page-item @prevDisabled">
+                    <a class="page-link"
+                       asp-route-pageIndex="@(Model.PageIndex - 1)"
+                       asp-route-currentKeyword="@ViewData["CurrentKeyword"]"
+                       asp-route-currentDistrictName="@ViewData["CurrentDistrictName"]"
+                       asp-route-currentWardName="@ViewData["CurrentWardName"]"
+                       asp-action="Index">
+                        Trang trước
+                    </a>
+                </li>
+                <li class="page-item @nextDisabled">
+                    <a class="page-link"
+                       asp-route-pageIndex="@(Model.PageIndex + 1)"
+                       asp-route-currentKeyword="@ViewData["CurrentKeyword"]"
+                       asp-route-currentDistrictName="@ViewData["CurrentDistrictName"]"
+                       asp-route-currentWardName="@ViewData["CurrentWardName"]"
+                       asp-action="Index">
+                        Trang kế
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </div>
 
