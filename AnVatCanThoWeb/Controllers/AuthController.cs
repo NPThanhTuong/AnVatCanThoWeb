@@ -60,15 +60,16 @@ namespace AnVatCanThoWeb.Controllers
                 AllowRefresh = true,
             };
 
-            // Gán user đã login
-            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-            Thread.CurrentPrincipal = claimsPrincipal;
 
             await HttpContext.SignInAsync(
                 ApplicationAuthenticationScheme.UserScheme,
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties
             );
+
+            // Gán user đã login
+            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+            Thread.CurrentPrincipal = claimsPrincipal;
 
             if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
             {

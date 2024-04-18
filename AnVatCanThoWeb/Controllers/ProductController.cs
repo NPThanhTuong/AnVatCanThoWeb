@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Text;
 using PusherServer;
 using System.Net;
+using System.Security.Claims;
 
 namespace AnVatCanThoWeb.Controllers
 {
@@ -131,6 +132,13 @@ namespace AnVatCanThoWeb.Controllers
             const int RELATED_PRODUCT_NUMBER = 4;
             List<ProductVM> relatedProductsVM = new List<ProductVM>();
 
+            //var identity = User.Claims;
+            //if (identity is not null)
+            //{
+            //    var sid = identity.Claims.Where(c => c.Type == ClaimTypes.Sid)
+            //           .Select(c => c.Value).SingleOrDefault();
+            //}
+
             if (id == null)
             {
                 return NotFound();
@@ -190,15 +198,15 @@ namespace AnVatCanThoWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Comment(Comment data)
+        public async Task<ActionResult> Comment(Comment comment, string CustomerDisplayName)
         {
-            _db.Comments.Add(data);
+            _db.Comments.Add(comment);
             _db.SaveChanges();
             var options = new PusherOptions();
             options.Cluster = "ap1";
             var pusher = new Pusher("1788154", "a6a81aa4ce5b84db0557", "206be8baf48febe8923c", options);
-            ITriggerResult result = await pusher.TriggerAsync("comments_channel", "push_comment_event", data);
-            return Json(new { success = true });
+            ITriggerResult result = await pusher.TriggerAsync("comments_channel", "push_comment_event", new { comment, CustomerDisplayName });
+            return Json(new { success = true, customerDisplayName = CustomerDisplayName });
         }
 
         public IActionResult GetAllProduct()
