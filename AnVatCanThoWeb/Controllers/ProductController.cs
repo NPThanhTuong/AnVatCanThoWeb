@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Text;
+using PusherServer;
+using System.Net;
+using System.Security.Claims;
 
 namespace AnVatCanThoWeb.Controllers
 {
@@ -38,7 +41,7 @@ namespace AnVatCanThoWeb.Controllers
         private double AvgRatingStar(Product product)
         {
             double sum = 0;
-            
+
             foreach (var starItem in product.Ratings)
             {
                 sum += starItem.Star;
@@ -129,6 +132,13 @@ namespace AnVatCanThoWeb.Controllers
             const int RELATED_PRODUCT_NUMBER = 4;
             List<ProductVM> relatedProductsVM = new List<ProductVM>();
 
+            //var identity = User.Claims;
+            //if (identity is not null)
+            //{
+            //    var sid = identity.Claims.Where(c => c.Type == ClaimTypes.Sid)
+            //           .Select(c => c.Value).SingleOrDefault();
+            //}
+
             if (id == null)
             {
                 return NotFound();
@@ -181,11 +191,34 @@ namespace AnVatCanThoWeb.Controllers
             return View(detailProductVM);
         }
 
+        public IActionResult Comment()
+        {
+            List<Comment> comments = _db.Comments.ToList();
+            return Json(new { data = comments });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Comment(Comment comment, string CustomerDisplayName)
+        {
+            _db.Comments.Add(comment);
+            _db.SaveChanges();
+            var options = new PusherOptions();
+            options.Cluster = "ap1";
+            var pusher = new Pusher("1788154", "a6a81aa4ce5b84db0557", "206be8baf48febe8923c", options);
+            ITriggerResult result = await pusher.TriggerAsync("comments_channel", "push_comment_event", new { comment, CustomerDisplayName });
+            return Json(new { success = true, customerDisplayName = CustomerDisplayName });
+        }
+
         public IActionResult GetAllProduct()
         {
             List<Product> productList = _db.Products.ToList();
             List<Rating> ratingsList = _db.Ratings.ToList();
             return Json(new { data = productList, ratings = ratingsList });
         }
+
+        //app_id = "1788154"
+        //key = "a6a81aa4ce5b84db0557"
+        //secret = "206be8baf48febe8923c"
+        //cluster = "ap1"
     }
 }

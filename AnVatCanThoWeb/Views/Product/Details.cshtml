@@ -1,5 +1,6 @@
 ﻿@using AnVatCanThoWeb.ViewModels
 @using System.Security.Claims
+@using System.Threading
 
 @model DetailProductVM
 
@@ -41,10 +42,18 @@
             reviewBullet["Rất ngon"]++;
         }
     }
+
+    // User loggin
+    int userId = 1;
+    string userDisplayName = "Thanh Tường";
+    // if (identity is not null)
+    //     userId = identity.Claims.Where(c => c.Type == ClaimTypes.Sid)
+    //               .Select(c => c.Value).SingleOrDefault();
+    // }
 }
 
 <main class="bg-gray">
-    <div class="container py-3 ">
+    <div class="container py-5">
         <div class="row product-breadcrumb">
             <div class="col">
                 <nav aria-label="breadcrumb align-items-center">
@@ -70,13 +79,13 @@
                         <div class="carousel-inner">
                             @* Lặp qua các hình ảnh của sản phẩm hiển thị*@
                             <div class="carousel-item active">
-                                <img src="https://picsum.photos/200/300" class="d-block w-100 product-img-carousel" alt="Hình ảnh sản phẩm">
+                                <img src="~/images/UserIndex/Can-Tho-bridge.jpg" class="d-block w-100 product-img-carousel" alt="Hình ảnh sản phẩm">
                             </div>
                             <div class="carousel-item">
-                                <img src="https://picsum.photos/200/300" class="d-block w-100 product-img-carousel" alt="Hình ảnh sản phẩm">
+                                <img src="~/images/UserIndex/Can-Tho-bridge.jpg" class="d-block w-100 product-img-carousel" alt="Hình ảnh sản phẩm">
                             </div>
                             <div class="carousel-item">
-                                <img src="https://picsum.photos/200/300" class="d-block w-100 product-img-carousel" alt="Hình ảnh sản phẩm">
+                                <img src="~/images/UserIndex/Can-Tho-bridge.jpg" class="d-block w-100 product-img-carousel" alt="Hình ảnh sản phẩm">
                             </div>
                         </div>
                         <button class="carousel-control-prev" type="button" data-bs-target="#carouselProduct" data-bs-slide="prev">
@@ -174,7 +183,7 @@
                 {
                     <div class="col-6 col-md-4 col-lg-3 mb-4">
                         <div class="card shadow rounded-3">
-                            <img src="https://picsum.photos/200/300" class="card-img-top product-image-height rounded-top" alt="Hình ảnh sản phẩm">
+                            <img src="~/images/UserIndex/Can-Tho-bridge.jpg" class="card-img-top product-image-height rounded-top" alt="Hình ảnh sản phẩm">
 
                             <div class="card-body border-top border-gray-300">
                                 <h3 class="fs-5 fw-bold">@realatedProduct.Product.Name</h3>
@@ -285,38 +294,49 @@
                             </select>
                         </div>
                     </div>
-                    <div class="d-flex align-items-center gap-3">
-                        <img src="https://picsum.photos/100/100" alt="avatar user" class="comment_avatar-user" />
-                        <form class="flex-grow-1">
-                            <input name="productId" value="@productVM.Product.Id" hidden />
-                            <input name="snackBarId" value="@productVM.Product.SnackBarId" hidden />
-                            <input name="productId" value="@productVM.Product.Id" hidden />
-                            <div class="input-group">
-                                <textarea class="form-control"
-                                          name="comment"
-                                          aria-label="Comment for product"
-                                          aria-describedby="submit-comment-btn"
-                                          placeholder="Viết bình luận..."
-                                          required></textarea>
-                                <button type="submit" class="btn btn-primary" id="submit-comment-btn">Bình luận</button>
-                            </div>
-                        </form>
-
-                    </div>
+                    @if (userId != null)
+                    {
+                        <div class="d-flex align-items-center gap-3">
+                            <img src="~/images/UserIndex/Can-Tho-bridge.jpg" alt="avatar user" class="comment_avatar-user" />
+                            <form class="flex-grow-1" id="comment-form">
+                                <input name="ProductId" value="@productVM.Product.Id" hidden />
+                                <input name="SnackBarId" value="@productVM.Product.SnackBarId" hidden />
+                                <input name="CustomerId" value="@userId" hidden />
+                                <input name="CustomerDisplayName" value="@userDisplayName" hidden />
+                                <div class="input-group">
+                                    <textarea class="form-control"
+                                              name="Content"
+                                              aria-label="Comment for product"
+                                              aria-describedby="submit-comment-btn"
+                                              placeholder="Viết bình luận..."
+                                              required></textarea>
+                                    <button type="submit" class="btn btn-primary" id="submit-comment-btn">Bình luận</button>
+                                </div>
+                            </form>
+                        </div>
+                    }
                     <hr />
-                    <div>
+                    <div id="comment-list">
                         @foreach (var comment in productVM.Product.Comments)
                         {
-                            <div class="d-flex align-items-start gap-3">
-                                <img src="https://picsum.photos/100/100" class="comment_avatar-user" alt="avatar user" />
+                            <div class="d-flex align-items-start gap-3 mt-4">
+                                <img src="~/images/UserIndex/Can-Tho-bridge.jpg" class="comment_avatar-user" alt="avatar user" />
                                 <div>
                                     <div class="d-flex align-items-center">
                                         <h5 class="fs-6 fw-bold mb-0 me-2">@comment.Customer.DisplayName</h5>
+                                        @* Thời gian đã comment (Thêm trường createdAt cho Model Comment) *@
                                         <span class="fs-6 fw-light text-muted">5 tháng trước</span>
                                     </div>
-                                    <p class="mt-1">
-                                        @comment.Content Someone singing on top of this as well while using the voice don’t let me down as a back ground ting would be sick
+                                    <p class="my-1">
+                                        @comment.Content
                                     </p>
+                                    @if (userId != null)
+                                    {
+                                        <button class="comment-like-btn text-dark-gray">
+                                            <i class="fas fa-thumbs-up"></i>
+                                            <span class="ms-1">Thích</span>
+                                        </button>
+                                    }
                                 </div>
                             </div>
                         }
@@ -332,5 +352,6 @@
 }
 
 @section Scripts {
+    <script src="https://js.pusher.com/8.0.1/pusher.min.js"></script>
     <script src="~/js/product.js"></script>
 }
