@@ -1,0 +1,68 @@
+﻿@model AnVatCanThoWeb.Areas.SnackBar.ViewModels.Product.CreateProductViewModel;
+
+@{
+    ViewData["Title"] = "CreateProduct";
+    Layout = "~/Areas/SnackBar/Views/Shared/_Layout.cshtml";
+}
+<div class="container">
+<div class="row justify-content-center">
+    <div class="col-md-6">
+            <h1>Thêm sản phẩm</h1>
+
+            <h4>Sản phẩm</h4>
+            <hr />
+        <form asp-action="CreateProduct" asp-controller="Products" method="post" enctype="multipart/form-data" class="row g-3">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group col-md-6">
+                <label asp-for="ProductCategoryId" class="control-label">Danh mục sản phẩm</label>
+                <select asp-for="ProductCategoryId" class="form-control" asp-items="@ViewBag.Categories">
+                    <option value="">-- Select Category --</option>
+                </select>
+                <span asp-validation-for="ProductCategoryId" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+                <div class="form-group col-md-6">
+                <label asp-for="Description" class="control-label"></label>
+                    <textarea asp-for="Description" rows="3" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label asp-for="Ingredient" class="control-label"></label>
+                <textarea asp-for="Ingredient" rows="3" class="form-control"></textarea>
+                <span asp-validation-for="Ingredient" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label asp-for="Stock" class="control-label"></label>
+                <input asp-for="Stock" class="form-control" />
+                <span asp-validation-for="Stock" class="text-danger"></span>
+            </div>
+                <div class="form-group col-md-6">
+                <label asp-for="UnitPrice" class="control-label"></label>
+                <span class="input-group-addon">(VNĐ)</span>
+                <input asp-for="UnitPrice" class="form-control"/>
+                <span asp-validation-for="UnitPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group col-12">
+                <label asp-for="ProductImages" class="control-label">Hình ảnh sản phẩm</label>
+                <input asp-for="ProductImages" class="form-control" type="file" name="fileUploads" multiple />
+                @ViewBag.ThongBao
+                <span asp-validation-for="ProductImages" class="text-danger"></span>
+            </div>
+            <div class="form-group col-12">
+                <input type="submit" value="Lưu" class="btn btn-primary"/>
+                <span><a asp-action="Index" class="btn btn-danger"><i class="fa-solid fa-arrow-left">Trở về danh sách sản phẩm</i></a></span>
+            </div>
+        </form>
+        <div>
+            
+        </div>
+    </div>
+</div>
+</div>
+
+
+
