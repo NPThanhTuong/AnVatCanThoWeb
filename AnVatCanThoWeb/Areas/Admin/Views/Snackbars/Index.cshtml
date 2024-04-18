@@ -1,0 +1,90 @@
+@model AnVatCanThoWeb.Areas.Admin.ViewModels.Snackbars.GetAllSnackbarsResponse
+
+<h1 class="mt-4">Danh sách quầy đồ ăn vặt</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">
+        <a asp-action="Index" asp-controller="Home" asp-area="Admin">Trang chủ</a>
+    </li>
+    <li class="breadcrumb-item active">Quầy đồ ăn vặt</li>
+</ol>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <div class="d-flex align-items-center justify-content-between">
+            <form>
+                <div class="input-group rounded">
+                    <input type="search" 
+                           name="keyword"
+                           class="form-control rounded" 
+                           placeholder="Tìm kiếm" 
+                           aria-label="Search" 
+                           value="@ViewData["CurrentKeyword"]"
+                           aria-describedby="search-addon"/>
+                    <button class="input-group-text border-0">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+
+            @{
+                var prevDisabled = !Model.HasPrevious ? "disabled" : "";
+                var nextDisabled = !Model.HasNext ? "disabled" : "";
+            }
+            
+            <nav aria-label="Page navigation example">
+                <ul class="pagination mb-0">
+                    <li class="page-item @prevDisabled">
+                        <a class="page-link" 
+                           asp-route-pageIndex="@(Model.PageIndex - 1)"
+                           asp-route-currentKeyword="@ViewData["CurrentKeyword"]"
+                           asp-action="Index">Trang trước</a>
+                    </li>
+                    <li class="page-item @nextDisabled">
+                        <a class="page-link" 
+                           asp-route-pageIndex="@(Model.PageIndex + 1)"
+                           asp-route-currentKeyword="@ViewData["CurrentKeyword"]"
+                           asp-action="Index">Trang kế</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <div class="card-body">
+        <table id="my-datatable" class="display">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Tên đăng nhập</th>
+                <th>Tên hiển thị</th>
+                <th>Số điện thoại</th>
+                <th>Email</th>
+                <th>Ngày sinh</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var snackbar in Model.Data)
+            {
+                <tr>
+                    <td>@snackbar.Id</td>
+                    <td>@snackbar.Username</td>
+                    <td>@snackbar.DisplayName</td>
+                    <td>@snackbar.Tel</td>
+                    <td>@snackbar.Email</td>
+                    <td>@snackbar.Dob.ToString("dd/MM/yyyy")</td>
+                    <td></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css"/>
+}
+
+@section Scripts {
+    <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+    <script src="~/console/admin/snackbars/scripts.js"></script>
+}
