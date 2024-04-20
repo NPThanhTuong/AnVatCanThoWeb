@@ -115,7 +115,7 @@
                                                 }
                                             }
 
-                                            <span class="badge ms-2 text-dark-gray">@item.AvgRating</span>
+                                            <span class="badge ms-2 text-dark-gray">@(item.AvgRating > 0 ? (int)item.AvgRating : 0)</span>
                                         </div>
 
                                     </div>
@@ -152,8 +152,8 @@
 
                                 @for (int i = 1; i <= totalPage; i++)
                                 {
-                                    <li class="page-item @(curPage == i ? "active" : "")">
-                                        <button class="page-link" action="SpecificPage(@i)">
+                                    <li class="page-item @(curPage == i ? "active" : "")" onclick="SpecificPage(@i)">
+                                        <button class="page-link">
                                             @i
                                         </button>
                                     </li>

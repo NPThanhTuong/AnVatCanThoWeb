@@ -7,8 +7,9 @@
 @{
     ProductVM productVM = Model.ProductVM;
     List<ProductVM> relatedProductVM = Model.RelatedProduct;
-
+    var comments = Model.Comments;
     int totalOfRating = productVM.Product.Ratings.Count;
+    int totalComment = ViewBag.TotalComment;
 
     Dictionary<string, int> reviewBullet = new Dictionary<string, int>();
     reviewBullet.Add("Rất ngon", 0);
@@ -43,13 +44,21 @@
         }
     }
 
-    // User loggin
-    int userId = 1;
-    string userDisplayName = "Thanh Tường";
-    // if (identity is not null)
-    //     userId = identity.Claims.Where(c => c.Type == ClaimTypes.Sid)
-    //               .Select(c => c.Value).SingleOrDefault();
-    // }
+    // Get user login
+    string userId = User.Claims.Where(c => c.Type == ClaimTypes.Sid).Select(c => c.Value).SingleOrDefault();
+    string userDisplayName = User.Claims.Where(c => c.Type == ClaimTypes.Name).Select(c => c.Value).SingleOrDefault();
+    string userAvatar = User.Claims.Where(c => c.Type == ClaimTypes.UserData).Select(c => c.Value).SingleOrDefault();
+
+    // Pagination
+    int totalPage = ViewBag.TotalPage;
+    string queryPage = Context.Request.Query["page"];
+    string sortValue = Context.Request.Query["sort"];
+    int curPage = 1;
+
+    if (!string.IsNullOrEmpty(queryPage))
+    {
+        _ = int.TryParse(queryPage, out curPage);
+    }
 }
 
 <main class="bg-gray">
@@ -117,7 +126,9 @@
                                 }
                             }
 
-                            <span class="ms-2 text-decoration-underline text-dark-gray">@productVM.AvgRating</span>
+                            <span class="ms-2 text-decoration-underline text-dark-gray">
+                                @(productVM.AvgRating > 0 ? (int)productVM.AvgRating : 0)
+                            </span>
                         </div>
 
                         <span class="vertical-divider"></span>
@@ -150,7 +161,6 @@
                             @foreach (var address in productVM.Product.SnackBar.Addresses)
                             {
                                 <li>@address.NoAndStreet, @address.WardName, @address.DistrictName</li>
-
                             }
                         </ul>
                     </div>
@@ -179,62 +189,69 @@
             <h4>Có thể bạn quan tâm</h4>
             <div class="row mt-4">
                 @* Sản phẩm liên quan *@
-                @foreach (var realatedProduct in relatedProductVM)
+                @if (relatedProductVM.Count > 0)
                 {
-                    <div class="col-6 col-md-4 col-lg-3 mb-4">
-                        <div class="card shadow rounded-3">
-                            <img src="~/images/UserIndex/Can-Tho-bridge.jpg" class="card-img-top product-image-height rounded-top" alt="Hình ảnh sản phẩm">
+                    @foreach (var realatedProduct in relatedProductVM)
+                    {
+                        <div class="col-6 col-md-4 col-lg-3 mb-4">
+                            <div class="card shadow rounded-3">
+                                <img src="~/images/UserIndex/Can-Tho-bridge.jpg" class="card-img-top product-image-height rounded-top" alt="Hình ảnh sản phẩm">
 
-                            <div class="card-body border-top border-gray-300">
-                                <h3 class="fs-5 fw-bold">@realatedProduct.Product.Name</h3>
-                                <a asp-action="Details" asp-controller="Shop" asp-route-id="@realatedProduct.Product.SnackBarId" class="h6 fw-bold">@realatedProduct.Product.SnackBar.DisplayName</a>
-                                <h5 class="h6 fw-semibold text-gray mt-2 product-truncate-text">@realatedProduct.Product.Description</h5>
-                                <div>
-                                    <span class="h6 mb-0 text-decoration-line-through me-2 text-gray">
-                                        @realatedProduct.Product.UnitPrice.ToString("#,###") đ
-                                    </span>
-                                    @* Cần xử lý giá giảm ở đây, hiện tại chỉ hiển thị tạm *@
-                                    <span class="h5 mb-0 text-danger">@realatedProduct.Product.UnitPrice.ToString("#,###") đ</span>
-                                </div>
-                                <div class="d-flex mt-3">
-                                    @{
-                                        numberOfStar = (int)realatedProduct.AvgRating;
-                                    }
-                                    @for (int i = 1; i <= 5; i++)
-                                    {
-                                        if (i <= numberOfStar)
-                                        {
-                                            <span class="star fas fa-star text-warning me-1"></span>
-                                        }
-                                        else
-                                        {
-                                            <span class="star fas fa-star text-gray me-1"></span>
-                                        }
-                                    }
-
-                                    <span class="badge ms-2 text-dark-gray">@realatedProduct.AvgRating</span>
-                                </div>
-
-                            </div>
-                            <div class="card-footer bg-gray-200 border-top border-gray-300 p-4">
-                                <div class="d-flex align-items-center">
-                                    <div class="me-auto">
-                                        <button onClick="AddToHeartList('heart_icon_@realatedProduct.Product.Id')" class="btn product-heart-btn px-1 fs-4" id="heart_icon_@realatedProduct.Product.Id" type="button" aria-label="Thêm vào danh sách yêu thích" title="Thêm vào danh sách yêu thích">
-                                            <i aria-hidden="true" class="far fa-heart"></i>
-                                        </button>
+                                <div class="card-body border-top border-gray-300">
+                                    <h3 class="fs-5 fw-bold">@realatedProduct.Product.Name</h3>
+                                    <a asp-action="Details" asp-controller="Shop" asp-route-id="@realatedProduct.Product.SnackBarId" class="h6 fw-bold">@realatedProduct.Product.SnackBar.DisplayName</a>
+                                    <h5 class="h6 fw-semibold text-gray mt-2 product-truncate-text">@realatedProduct.Product.Description</h5>
+                                    <div>
+                                        <span class="h6 mb-0 text-decoration-line-through me-2 text-gray">
+                                            @realatedProduct.Product.UnitPrice.ToString("#,###") đ
+                                        </span>
+                                        @* Cần xử lý giá giảm ở đây, hiện tại chỉ hiển thị tạm *@
+                                        <span class="h5 mb-0 text-danger">@realatedProduct.Product.UnitPrice.ToString("#,###") đ</span>
                                     </div>
-                                    <a class="btn btn-success rounded-3" asp-action="Details" asp-controller="Product" asp-route-id="@realatedProduct.Product.Id">Chi tiết</a>
+                                    <div class="d-flex mt-3">
+                                        @{
+                                            numberOfStar = (int)realatedProduct.AvgRating;
+                                        }
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (i <= numberOfStar)
+                                            {
+                                                <span class="star fas fa-star text-warning me-1"></span>
+                                            }
+                                            else
+                                            {
+                                                <span class="star fas fa-star text-gray me-1"></span>
+                                            }
+                                        }
+
+                                        <span class="badge ms-2 text-dark-gray">@realatedProduct.AvgRating</span>
+                                    </div>
+
+                                </div>
+                                <div class="card-footer bg-gray-200 border-top border-gray-300 p-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-auto">
+                                            <button onClick="AddToHeartList('heart_icon_@realatedProduct.Product.Id')" class="btn product-heart-btn px-1 fs-4" id="heart_icon_@realatedProduct.Product.Id" type="button" aria-label="Thêm vào danh sách yêu thích" title="Thêm vào danh sách yêu thích">
+                                                <i aria-hidden="true" class="far fa-heart"></i>
+                                            </button>
+                                        </div>
+                                        <a class="btn btn-success rounded-3" asp-action="Details" asp-controller="Product" asp-route-id="@realatedProduct.Product.Id">Chi tiết</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted text-center fsborder-4 fw-4">Không có sản phẩm liên quan</p>
                 }
             </div>
         </div>
 
 
 
-        <div class="card shadow border-white p-4 mt-4">
+        <div class="card shadow border-white p-4 mt-4" id="review-section">
             <h4>Đánh giá</h4>
             <div class="row mt-4">
                 <div class="col-12 col-lg-3">
@@ -256,7 +273,9 @@
                                 }
                             }
 
-                            <span class="ms-2 text-decoration-underline text-dark-gray">@productVM.AvgRating</span>
+                            <span class="ms-2 text-decoration-underline text-dark-gray">
+                                @(productVM.AvgRating > 0 ? (int)productVM.AvgRating : 0)
+                            </span>
                         </div>
 
                         <span class="vertical-divider"></span>
@@ -273,8 +292,8 @@
                                 <div class="progress flex-grow-1">
                                     <div class="progress-bar bg-warning"
                                          role="progressbar"
-                                         style="width: @((kvp.Value / totalOfRating) * 100)%"
-                                         aria-valuenow="@((kvp.Value / totalOfRating) * 100)"
+                                         style="width: @(totalOfRating > 0 ? (kvp.Value / totalOfRating) * 100 : 0)%"
+                                         aria-valuenow="@(totalOfRating > 0 ? (kvp.Value / totalOfRating) * 100 : 0)"
                                          aria-valuemin="0"
                                          aria-valuemax="100">
                                     </div>
@@ -286,21 +305,24 @@
 
                 <div class="col-12 col-lg-9">
                     <div class="row my-3">
-                        <span class="col-3 fw-bold text-center fs-4">@productVM.Product.Comments.Count bình luận</span>
+                        <span class="col-3 fw-bold text-center fs-4">@totalComment bình luận</span>
                         <div class="col-3">
-                            <select class="form-select" aria-label="Sort comment">
-                                <option selected>Sắp xếp theo</option>
-                                <option value="desc">Mới nhất</option>
+                            <select class="form-select" aria-label="Sort comment" id="sortCommentSelect" data-product-id="@productVM.Product.Id">
+                                <option value="desc">Sắp xếp theo</option>
+                                <option selected="@(sortValue == "desc")" value="desc">Mới nhất</option>
+                                <option selected="@(sortValue == "asc")" value="asc">Cũ nhất</option>
+
                             </select>
                         </div>
                     </div>
-                    @if (userId != null)
+                    @if (!string.IsNullOrEmpty(userId))
                     {
                         <div class="d-flex align-items-center gap-3">
                             <img src="~/images/UserIndex/Can-Tho-bridge.jpg" alt="avatar user" class="comment_avatar-user" />
                             <form class="flex-grow-1" id="comment-form">
                                 <input name="ProductId" value="@productVM.Product.Id" hidden />
                                 <input name="SnackBarId" value="@productVM.Product.SnackBarId" hidden />
+                                <input name="CustomerAvatar" value="@userAvatar" hidden />
                                 <input name="CustomerId" value="@userId" hidden />
                                 <input name="CustomerDisplayName" value="@userDisplayName" hidden />
                                 <div class="input-group">
@@ -317,30 +339,54 @@
                     }
                     <hr />
                     <div id="comment-list">
-                        @foreach (var comment in productVM.Product.Comments)
+                        @if (comments.Count > 0)
                         {
-                            <div class="d-flex align-items-start gap-3 mt-4">
-                                <img src="~/images/UserIndex/Can-Tho-bridge.jpg" class="comment_avatar-user" alt="avatar user" />
-                                <div>
-                                    <div class="d-flex align-items-center">
-                                        <h5 class="fs-6 fw-bold mb-0 me-2">@comment.Customer.DisplayName</h5>
-                                        @* Thời gian đã comment (Thêm trường createdAt cho Model Comment) *@
-                                        <span class="fs-6 fw-light text-muted">5 tháng trước</span>
+                            @foreach (var comment in comments)
+                            {
+                                <div class="d-flex align-items-start gap-3 mt-4">
+                                    <img src="~/images/User/@comment.Customer.Avatar" class="comment_avatar-user" alt="avatar user" />
+                                    <div>
+                                        <div class="d-flex align-items-center">
+                                            <h5 class="fs-6 fw-bold mb-0 me-2">@comment.Customer.DisplayName</h5>
+                                            @* Thời gian đã comment (Thêm trường createdAt cho Model Comment) *@
+                                            <span class="fs-6 fw-light text-muted">@comment.CreatedAt.ToString()</span>
+                                        </div>
+                                        <p class="my-1">
+                                            @comment.Content
+                                        </p>
+                                        @if (!string.IsNullOrEmpty(userId))
+                                        {
+                                            <button class="comment-like-btn text-dark-gray">
+                                                <i class="fas fa-thumbs-up"></i>
+                                                <span class="ms-1">Thích</span>
+                                            </button>
+                                        }
                                     </div>
-                                    <p class="my-1">
-                                        @comment.Content
-                                    </p>
-                                    @if (userId != null)
-                                    {
-                                        <button class="comment-like-btn text-dark-gray">
-                                            <i class="fas fa-thumbs-up"></i>
-                                            <span class="ms-1">Thích</span>
-                                        </button>
-                                    }
                                 </div>
-                            </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-muted text-center fsborder-4 fw-4">Không có bình luận</p>
                         }
                     </div>
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item @(curPage <= 1 ? "disabled" : "")"
+                                onclick="PrevPage(@totalPage)">
+                                <button class="page-link" @(curPage <= 1 ? "disabled" : "")>
+                                    Trang trước
+                                </button>
+                            </li>
+
+                            <li class="page-item @(curPage >= totalPage ? "disabled" : "")"
+                                onclick="NextPage(@totalPage)">
+                                <button class="page-link" @(curPage >= totalPage ? "disabled" : "")>
+                                    Trang sau
+                                </button>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
@@ -353,5 +399,5 @@
 
 @section Scripts {
     <script src="https://js.pusher.com/8.0.1/pusher.min.js"></script>
-    <script src="~/js/product.js"></script>
+    <script src="~/js/detail-product.js"></script>
 }

@@ -50,6 +50,8 @@ namespace AnVatCanThoWeb.Controllers
             new Claim(ClaimTypes.Email, loginVm.Email),
             new Claim(ClaimTypes.Role, "User"),
             new Claim(ClaimTypes.Sid, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.DisplayName),
+            new Claim(ClaimTypes.UserData, user.Avatar),
         };
 
             var claimsIdentity = new ClaimsIdentity(claims, ApplicationAuthenticationScheme.UserScheme);
@@ -68,8 +70,8 @@ namespace AnVatCanThoWeb.Controllers
             );
 
             // Gán user đã login
-            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-            Thread.CurrentPrincipal = claimsPrincipal;
+            //var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+            //Thread.CurrentPrincipal = claimsPrincipal;
 
             if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
             {
