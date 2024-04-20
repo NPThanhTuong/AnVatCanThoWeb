@@ -1,0 +1,16 @@
+.avatar {
+    width: 100px;
+    height: 100px;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-color: #4d4f52;
+}
+
+.cover {
+    height: 200px;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-color: #4d4f52;
+}

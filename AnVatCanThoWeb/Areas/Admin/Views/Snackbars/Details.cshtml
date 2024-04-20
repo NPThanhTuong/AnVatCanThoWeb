@@ -1,0 +1,138 @@
+@model AnVatCanThoWeb.Areas.Admin.ViewModels.Snackbars.SnackbarViewModel
+
+<h1 class="mt-4">Chi tiết quầy đồ ăn vặt</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">
+        <a asp-action="Index" asp-controller="Home" asp-area="Admin">Trang chủ</a>
+    </li>
+    <li class="breadcrumb-item">
+        <a asp-action="Index" asp-controller="Snackbars" asp-area="Admin">Quầy đồ ăn vặt</a>
+    </li>
+    <li class="breadcrumb-item active">@Model.DisplayName</li>
+</ol>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" href="#">
+                    Thông tin tổng quan
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Sản phẩm</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Đơn hàng</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <a class="btn btn-outline-danger" asp-action="Index">
+            <i class="fa-solid fa-angle-left"></i>
+            Trở về
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12 col-md-4 col-lg-3">
+                <div class="flex flex-column">
+                    <div class="bg-light rounded-2 border border-primary d-flex flex-column align-items-center w-100 py-5">
+                        <div class="rounded-circle avatar"
+                             style='background-image: url("@Url.Content($"~/images/Snackbar/{Model.Avatar}")")'>
+                        </div>
+
+                        <h5 class="text-primary">
+                            @Model.DisplayName
+                        </h5>
+
+                        <span class="form-text">
+                            @Html.Raw("@")@Model.Username
+                        </span>
+                    </div>
+
+                    <div class="bg-light rounded-2 border border-primary d-flex flex-column align-items-center w-100 py-2 px-3 my-4">
+                        <span class="text-primary form-text w-100" style="font-weight: 500">
+                            Địa chỉ
+                        </span>
+
+                        <ul class="list-group list-group-flush w-100">
+                            @foreach (var addr in Model.Addresses)
+                            {
+                                <li class="list-group-item bg-light">
+                                    @addr.NoAndStreet, @addr.WardName, @addr.DistrictName
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-8 col-lg-9">
+                <div class="d-flex flex-column">
+                    <div class="bg-light rounded-2 border border-primary w-100 cover mb-4"
+                         style="background-image: url('@Url.Content($"~/images/SnackBar/{Model.CoverImage}")');">
+                    </div>
+
+                    <div class="bg-light rounded-2 border border-primary d-flex flex-column align-items-center w-100 py-2 px-3 mb-4">
+                        <span class="text-primary form-text w-100" style="font-weight: 500">
+                            Thông tin quầy thức ăn
+                        </span>
+
+                        <div class="w-100 mt-1 px-2">
+                            <table class="table">
+                                <tbody>
+                                <tr>
+                                    <th>Email</th>
+                                    <td>@Model.Email</td>
+                                </tr>
+
+                                <tr>
+                                    <th>Số điện thoại</th>
+                                    <td>@Model.Tel</td>
+                                </tr>
+
+                                <tr>
+                                    <th>Ngày sinh chủ sở hữu</th>
+                                    <td>@Model.Dob.ToString("dd/MM/yyyy")</td>
+                                </tr>
+
+                                <tr>
+                                    <th>Mô tả</th>
+                                    <td>@Model.Description</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="bg-light rounded-2 border border-primary d-flex flex-column align-items-center w-100 py-2 px-3 mb-4">
+                        <span class="text-primary form-text w-100" style="font-weight: 500">
+                            Sản phẩm
+                        </span>
+
+                        <a href="#" class="text-decoration-underline text-primary mt-1 mb-3">
+                            Xem sản phẩm
+                        </a>
+                    </div>
+
+                    <div class="bg-light rounded-2 border border-primary d-flex flex-column align-items-center w-100 py-2 px-3 mb-4">
+                        <span class="text-primary form-text w-100" style="font-weight: 500">
+                            Đơn hàng
+                        </span>
+
+                        <a href="#" class="text-decoration-underline text-primary mt-1 mb-3">
+                            Xem đơn hàng
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/console/admin/snackbars/details.css">
+}

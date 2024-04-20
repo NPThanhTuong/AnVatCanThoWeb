@@ -1,11 +1,14 @@
 ﻿@model AnVatCanThoWeb.Areas.Admin.ViewModels.Category.CategoryViewModel;
 
-<h1 class="mt-4">Danh mục sản phẩm</h1>
+<h1 class="mt-4">Tạo mới danh mục sản phẩm</h1>
 <ol class="breadcrumb mb-4">
     <li class="breadcrumb-item">
         <a asp-action="Index" asp-controller="Home" asp-area="Admin">Trang chủ</a>
     </li>
-    <li class="breadcrumb-item active">Danh mục sản phẩm</li>
+    <li class="breadcrumb-item">
+        <a asp-action="Index" asp-controller="ProductCategories" asp-area="Admin">Danh mục sản phẩm</a>
+    </li>
+    <li class="breadcrumb-item active">Tạo mới</li>
 </ol>
 
 <div class="card mb-4">
@@ -30,24 +33,23 @@
                 <label asp-for="Name" class="control-label">
                     Tên danh mục sản phẩm
                 </label>
-                <input asp-for="Name" class="form-control" />
+                <input asp-for="Name" class="form-control"/>
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group mt-4">
                 <label asp-for="Description" class="control-label">
                     Mô tả danh mục sản phẩm
                 </label>
-                <input asp-for="Description" class="form-control" />
+                <input asp-for="Description" class="form-control"/>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group mt-4">
-                <input type="submit" value="Thêm" class="btn btn-primary" />
+                <input type="submit" value="Thêm" class="btn btn-primary"/>
             </div>
         </form>
     </div>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }
-

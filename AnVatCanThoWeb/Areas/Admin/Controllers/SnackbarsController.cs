@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace AnVatCanThoWeb.Areas.Admin.Controllers;
 
 [Area(AdminAreaName.Value)]
-[Authorize(AuthenticationSchemes = ApplicationAuthenticationScheme.AdminScheme)]
+// [Authorize(AuthenticationSchemes = ApplicationAuthenticationScheme.AdminScheme)]
 public class SnackbarsController : Controller
 {
     private readonly ApplicationDbContext _dbContext;
@@ -21,7 +21,7 @@ public class SnackbarsController : Controller
 
     public async Task<IActionResult> Index([FromQuery] GetAllSnackbarsRequest request)
     {
-        const int pageSize = 10;
+        const int pageSize = 1;
         
         var requestPageIndex = request.PageIndex; 
         var requestKeyword = request.Keyword; 
@@ -91,6 +91,8 @@ public class SnackbarsController : Controller
                 Tel = x.Tel,
                 Username = x.Username,
                 DisplayName = x.DisplayName,
+                Addresses = x.Addresses.Select(y => new AddressViewModel(
+                    y.NoAndStreet, y.DistrictName, y.WardName))
             }).ToListAsync();
 
         var response = new GetAllSnackbarsResponse
@@ -102,7 +104,35 @@ public class SnackbarsController : Controller
 
         return View(response);
     }
+    
+    public async Task<IActionResult> Details([FromRoute] int id)
+    {
+        var snackbar = await _dbContext.SnackBars
+            .Include(x => x.Addresses)
+            .FirstOrDefaultAsync(x => x.Id == id);
+        if (snackbar is null)
+        {
+            return NotFound();
+        }
 
+        var snackbarViewModel = new SnackbarViewModel
+        {
+            Id = snackbar.Id,
+            Description = snackbar.Description,
+            Avatar = snackbar.Avatar,
+            CoverImage = snackbar.CoverImage,
+            Dob = snackbar.Dob,
+            Email = snackbar.Email,
+            Tel = snackbar.Tel,
+            Username = snackbar.Username,
+            DisplayName = snackbar.DisplayName,
+            Addresses = snackbar.Addresses.Select(y => new AddressViewModel(
+                y.NoAndStreet, y.DistrictName, y.WardName))
+        };
+
+        return View(snackbarViewModel);
+    }
+    
     [HttpGet("/[area]/api/districts")]
     public async Task<IActionResult> GetAllDistricts()
     {

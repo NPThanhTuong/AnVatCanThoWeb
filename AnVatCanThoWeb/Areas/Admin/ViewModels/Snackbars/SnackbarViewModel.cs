@@ -19,4 +19,11 @@ public class SnackbarViewModel
     public string? CoverImage { get; init; }
 
     public string DisplayName { get; init; } = string.Empty;
+
+    public IEnumerable<AddressViewModel> Addresses = Enumerable.Empty<AddressViewModel>();
 }
+
+public record AddressViewModel(
+    string NoAndStreet,
+    string DistrictName,
+    string WardName);

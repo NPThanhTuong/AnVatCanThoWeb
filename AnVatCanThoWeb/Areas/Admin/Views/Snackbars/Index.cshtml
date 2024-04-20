@@ -56,7 +56,7 @@
                 <th>Tên hiển thị</th>
                 <th>Số điện thoại</th>
                 <th>Email</th>
-                <th>Ngày sinh</th>
+                <th>Địa chỉ</th>
                 <th></th>
             </tr>
             </thead>
@@ -69,8 +69,19 @@
                     <td>@snackbar.DisplayName</td>
                     <td>@snackbar.Tel</td>
                     <td>@snackbar.Email</td>
-                    <td>@snackbar.Dob.ToString("dd/MM/yyyy")</td>
-                    <td></td>
+                    <td>
+                        @foreach (var addr in snackbar.Addresses)
+                        {
+                            <div>
+                                @(addr.NoAndStreet), @(addr.WardName), @addr.DistrictName
+                            </div>
+                        }
+                    </td>
+                    <td>
+                        <a type="button" class="btn btn-primary" asp-action="Details" asp-route-id="@snackbar.Id">
+                            <i class="fa-solid fa-eye"></i>
+                        </a>
+                    </td>
                 </tr>
             }
             </tbody>
