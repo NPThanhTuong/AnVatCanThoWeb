@@ -1,0 +1,109 @@
+@using AnVatCanThoWeb.Areas.Admin.ViewModels.Snackbars
+@model IEnumerable<AnVatCanThoWeb.Areas.Admin.ViewModels.Snackbars.ProductViewModel>
+
+@{
+    var productTypeDict = new Dictionary<string, Dictionary<string, List<ProductViewModel>>>();
+    foreach (var item in Model)
+    {
+        if (!productTypeDict.TryGetValue(item.ProductTypeName, out var productCateDict))
+        {
+            productCateDict = new Dictionary<string, List<ProductViewModel>>();
+        }
+
+        if (!productCateDict.TryGetValue(item.ProductCategoryName, out var productList))
+        {
+            productList = new List<ProductViewModel>();
+        }
+
+        productList.Add(item);
+        productCateDict[item.ProductCategoryName] = productList;
+        productTypeDict[item.ProductTypeName] = productCateDict;
+    }
+
+    var snackbar = (ViewData["Snackbar"] as SnackBar)!;
+}
+
+<h1 class="mt-4">Thông tin sản phẩm quầy đồ ăn vặt</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">
+        <a asp-action="Index" asp-controller="Home" asp-area="Admin">Trang chủ</a>
+    </li>
+    <li class="breadcrumb-item">
+        <a asp-action="Index" asp-controller="Snackbars" asp-area="Admin">Quầy đồ ăn vặt</a>
+    </li>
+    <li class="breadcrumb-item active">@snackbar.DisplayName</li>
+</ol>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link" asp-action="Details" asp-route-id="@snackbar.Id">
+                    Thông tin tổng quan
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="#">Sản phẩm</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Đơn hàng</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <a class="btn btn-outline-danger" asp-action="Index">
+            <i class="fa-solid fa-angle-left"></i>
+            Trở về
+        </a>
+    </div>
+    <div class="card-body">
+        @foreach (var typePair in productTypeDict)
+        {
+            <h5 class="text-primary fw-bold">@typePair.Key</h5>
+            @foreach (var catePair in typePair.Value)
+            {
+                <table class="display dataTable">
+                    <thead>
+                    <tr>
+                        <th colspan="5">
+                            <span class="d-flex align-items-center justify-content-start w-100">
+                                @catePair.Key
+                            </span>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>#</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Số lượng</th>
+                        <th>Giá tiền</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var product in catePair.Value)
+                    {
+                        <tr>
+                            <td>@product.Id</td>
+                            <td>@product.Name</td>
+                            <td>@product.Stock</td>
+                            <td>@product.UnitPrice</td>
+                            <td>
+                                <a type="button" class="btn btn-primary" asp-action="ProductDetails" asp-route-id="@snackbar.Id" asp-route-productId="@product.Id">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            }
+        }
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css"/>
+}

@@ -21,19 +21,19 @@ public class SnackbarsController : Controller
 
     public async Task<IActionResult> Index([FromQuery] GetAllSnackbarsRequest request)
     {
-        const int pageSize = 1;
-        
-        var requestPageIndex = request.PageIndex; 
-        var requestKeyword = request.Keyword; 
+        const int pageSize = 10;
+
+        var requestPageIndex = request.PageIndex;
+        var requestKeyword = request.Keyword;
         var requestCurrentKeyword = request.CurrentKeyword;
-        
+
         var requestDistrictName = request.DistrictName;
         var requestWardName = request.WardName;
         var requestCurrentDistrictName = request.CurrentDistrictName;
         var requestCurrentWardName = request.CurrentWardName;
 
-        if (requestKeyword is not null 
-            || requestDistrictName is not null 
+        if (requestKeyword is not null
+            || requestDistrictName is not null
             || requestWardName is not null)
         {
             requestPageIndex = 1;
@@ -42,7 +42,7 @@ public class SnackbarsController : Controller
         requestKeyword ??= requestCurrentKeyword;
         requestDistrictName ??= requestCurrentDistrictName;
         requestWardName ??= requestCurrentWardName;
-        
+
         ViewData["CurrentKeyword"] = requestKeyword;
         ViewData["CurrentWardName"] = requestWardName;
         ViewData["CurrentDistrictName"] = requestDistrictName;
@@ -57,28 +57,28 @@ public class SnackbarsController : Controller
                 .Where(x => x.Addresses
                     .Any(y => y.DistrictName.Equals(requestDistrictName)));
         }
-        
+
         if (!string.IsNullOrEmpty(requestWardName))
         {
             snackbars = snackbars
                 .Where(x => x.Addresses
                     .Any(y => y.WardName.Equals(requestWardName)));
         }
-        
+
         if (!string.IsNullOrEmpty(requestKeyword))
         {
             snackbars = snackbars
                 .Where(x => x.Email.Contains(requestKeyword)
-                    || x.Description.Contains(requestKeyword)
-                    || x.DisplayName.Contains(requestKeyword)
-                    || x.Tel.Contains(requestKeyword)
-                    || x.Username.Contains(requestKeyword)
-                    || x.Addresses
-                        .Any(y => y.NoAndStreet.Contains(requestKeyword)));
+                            || x.Description.Contains(requestKeyword)
+                            || x.DisplayName.Contains(requestKeyword)
+                            || x.Tel.Contains(requestKeyword)
+                            || x.Username.Contains(requestKeyword)
+                            || x.Addresses
+                                .Any(y => y.NoAndStreet.Contains(requestKeyword)));
         }
 
         var totalRows = await snackbars.CountAsync();
-        var totalPages = (int)Math.Ceiling((float) totalRows / pageSize);
+        var totalPages = (int)Math.Ceiling((float)totalRows / pageSize);
 
         var snackbarVms = await snackbars.Skip((requestPageIndex - 1) * pageSize)
             .Take(pageSize)
@@ -104,7 +104,7 @@ public class SnackbarsController : Controller
 
         return View(response);
     }
-    
+
     public async Task<IActionResult> Details([FromRoute] int id)
     {
         var snackbar = await _dbContext.SnackBars
@@ -132,14 +132,108 @@ public class SnackbarsController : Controller
 
         return View(snackbarViewModel);
     }
-    
+
+    [Route("/[area]/[controller]/details/{id:int}/products")]
+    public async Task<IActionResult> Products([FromRoute] int id)
+    {
+        var snackbar = await _dbContext.SnackBars
+            .FirstOrDefaultAsync(x => x.Id == id);
+        if (snackbar is null)
+        {
+            return NotFound();
+        }
+
+        ViewData["Snackbar"] = snackbar;
+        var products = await _dbContext.Products
+            .Include(x => x.ProductCategory)
+            .ThenInclude(x => x.ProductType)
+            .Where(x => x.SnackBarId == id)
+            .Select(x => new ProductViewModel
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Description = x.Description,
+                UnitPrice = x.UnitPrice,
+                Ingredient = x.Ingredient,
+                Stock = x.Stock,
+                ProductCategoryName = x.ProductCategory.Name,
+                ProductTypeName = x.ProductCategory.ProductType.Name,
+            })
+            .ToListAsync();
+
+        return View(products);
+    }
+
+    [Route("/[area]/[controller]/details/{id:int}/products/{productId:int}")]
+    public async Task<IActionResult> ProductDetails(int id, int productId)
+    {
+        var snackbar = await _dbContext.SnackBars
+            .FirstOrDefaultAsync(x => x.Id == id);
+        if (snackbar is null)
+        {
+            return NotFound();
+        }
+
+        var product = await _dbContext.Products
+            .Include(x => x.ProductImages)
+            .Include(x => x.ProductCategory)
+            .ThenInclude(x => x.ProductType)
+            .FirstOrDefaultAsync(x => x.Id == productId && x.SnackBarId == id);
+        if (product is null)
+        {
+            return NotFound();
+        }
+
+        var productDetails = new ProductDetailsViewModel
+        {
+            Id = product.Id,
+            Name = product.Name,
+            Description = product.Description,
+            UnitPrice = product.UnitPrice,
+            Ingredient = product.Ingredient,
+            Stock = product.Stock,
+            ProductCategoryName = product.ProductCategory.Name,
+            ProductTypeName = product.ProductCategory.ProductType.Name,
+            ProductImages = product.ProductImages.Select(x => x.PathName)
+        };
+
+        ViewData["Snackbar"] = snackbar;
+
+        return View(productDetails);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> DeleteProduct([FromForm] int snackbarId, [FromForm] int productId)
+    {
+        var product = await _dbContext.Products
+            .FirstOrDefaultAsync(x => x.Id == productId);
+        if (product is null)
+        {
+            return NotFound();
+        }
+
+        try
+        {
+            _dbContext.Products.Remove(product);
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Không thể xoá sản phẩm vì liên quan đến các đơn hàng";
+            return RedirectToAction("ProductDetails", new { id = snackbarId, productId });
+        }
+
+        return RedirectToAction(actionName: "Products", routeValues: new { id = snackbarId });
+    }
+
     [HttpGet("/[area]/api/districts")]
     public async Task<IActionResult> GetAllDistricts()
     {
         var districts = await _dbContext.Districts.ToListAsync();
         return Ok(districts);
     }
-    
+
+
     [HttpGet("/[area]/api/wards")]
     public async Task<IActionResult> GetAllWards([FromQuery] string? districtName)
     {
@@ -148,9 +242,9 @@ public class SnackbarsController : Controller
         {
             wardQueryable = wardQueryable.Where(x => x.DistrictName.Equals(districtName));
         }
-        
+
         var wards = await wardQueryable.ToListAsync();
-        
+
         return Ok(wards);
     }
 }
