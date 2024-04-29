@@ -279,7 +279,6 @@ public class ProductsController : Controller
         {
             return NotFound();
         }
-
         _dbContext.ProductImages.Remove(productImage);
         _dbContext.SaveChangesAsync();
         return RedirectToAction("EditProductImages", new {id = productImage.ProductId});
