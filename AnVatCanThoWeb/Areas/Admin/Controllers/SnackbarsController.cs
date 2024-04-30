@@ -1,5 +1,6 @@
 using AnVatCanTho.DataAccess.Data;
 using AnVatCanThoWeb.Areas.Admin.Common;
+using AnVatCanThoWeb.Areas.Admin.ViewModels.Common;
 using AnVatCanThoWeb.Areas.Admin.ViewModels.Snackbars;
 using AnVatCanThoWeb.Common.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -133,6 +134,34 @@ public class SnackbarsController : Controller
         return View(snackbarViewModel);
     }
 
+    [HttpPost]
+    public async Task<IActionResult> Delete([FromForm] int snackbarId)
+    {
+        var snackbar = await _dbContext.SnackBars
+            .FirstOrDefaultAsync(x => x.Id == snackbarId);
+        if (snackbar is null)
+        {
+            return NotFound();
+        }
+
+        var addresses = await _dbContext.Addresses
+            .Where(x => x.SnackBarId == snackbarId).ToListAsync();
+        
+        try
+        {
+            _dbContext.SnackBars.Remove(snackbar);
+            _dbContext.Addresses.RemoveRange(addresses);
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Không thể xoá quầy vì liên quan đến các đơn hàng";
+            return RedirectToAction("Details", new { id = snackbarId });
+        }
+        
+        return RedirectToAction("Index");
+    }
+
     [Route("/[area]/[controller]/details/{id:int}/products")]
     public async Task<IActionResult> Products([FromRoute] int id)
     {
@@ -212,18 +241,62 @@ public class SnackbarsController : Controller
             return NotFound();
         }
 
+        var comments = await _dbContext.Comments.Where(x => x.SnackBarId == snackbarId)
+            .ToListAsync();
+
         try
         {
+            _dbContext.Comments.RemoveRange(comments);
             _dbContext.Products.Remove(product);
             await _dbContext.SaveChangesAsync();
         }
         catch (Exception)
         {
-            TempData["ErrorMessage"] = "Không thể xoá sản phẩm vì liên quan đến các đơn hàng";
+            TempData["ErrorMessage"] = "Không thể xoá sản phẩm vì liên quan đến các đơn hàng, bình luận và đánh giá";
             return RedirectToAction("ProductDetails", new { id = snackbarId, productId });
         }
 
         return RedirectToAction(actionName: "Products", routeValues: new { id = snackbarId });
+    }
+    
+    [Route("/[area]/[controller]/details/{id:int}/orders")]
+    public async Task<IActionResult> Orders([FromMultiSource] GetAllOrdersRequest request)
+    {
+        var snackbar = await _dbContext.SnackBars
+            .FirstOrDefaultAsync(x => x.Id == request.Id);
+        if (snackbar is null)
+        {
+            return NotFound();
+        }
+
+        const int pageSize = 10;
+        
+        var orders = await _dbContext.Orders
+            .Include(x => x.OrderDetails)
+            .ThenInclude(x => x.Product)
+            .Where(x => x.OrderDetails
+                .Any(y => y.SnackBarId == request.Id))
+            .Skip((request.PageIndex - 1) * pageSize)
+            .Take(pageSize)
+            .Select(x => new OrderViewModel
+            {
+                Id = x.Id,
+                Address = x.Address,
+                Status = x.Status,
+                Total = x.Total,
+                OrderDetails = x.OrderDetails
+                    .Select(y => new OrderDetailViewModel(
+                        y.ProductId,
+                        y.Product.Name,
+                        y.Quantity, 
+                        y.Price)),
+                CustomerId = x.CustomerId,
+                CustomerName = x.Customer.DisplayName
+            })
+            .ToListAsync();
+        
+        ViewData["Snackbar"] = snackbar;
+        return View(orders);
     }
 
     [HttpGet("/[area]/api/districts")]

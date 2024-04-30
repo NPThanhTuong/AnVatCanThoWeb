@@ -1,12 +1,12 @@
-@model AnVatCanThoWeb.Areas.Admin.ViewModels.Snackbars.SnackbarViewModel
+@model AnVatCanThoWeb.Areas.Admin.ViewModels.Customers.CustomerViewModel
 
-<h1 class="mt-4">Chi tiết quầy đồ ăn vặt</h1>
+<h1 class="mt-4">Chi tiết khách hàng</h1>
 <ol class="breadcrumb mb-4">
     <li class="breadcrumb-item">
         <a asp-action="Index" asp-controller="Home" asp-area="Admin">Trang chủ</a>
     </li>
     <li class="breadcrumb-item">
-        <a asp-action="Index" asp-controller="Snackbars" asp-area="Admin">Quầy đồ ăn vặt</a>
+        <a asp-action="Index" asp-controller="Customers" asp-area="Admin">Khách hàng</a>
     </li>
     <li class="breadcrumb-item active">@Model.DisplayName</li>
 </ol>
@@ -20,9 +20,6 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" asp-action="Products" asp-route-id="@Model.Id">Sản phẩm</a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link" asp-action="Orders" asp-route-id="@Model.Id">Đơn hàng</a>
             </li>
         </ul>
@@ -31,14 +28,14 @@
 
 <div class="card mb-4">
     <div class="card-header">
-        <div class="d-flex justify-content-between">
+        <div class="d-flex justify-content-between align-items-center">
             <a class="btn btn-outline-danger" asp-action="Index">
                 <i class="fa-solid fa-angle-left"></i>
                 Trở về
             </a>
 
             <form onsubmit="deleteProduct(event,this)" method="post" asp-action="Delete">
-                <input type="hidden" name="snackbarId" value="@Model.Id">
+                <input type="hidden" name="customerId" value="@Model.Id">
                 <button class="btn btn-danger">
                     <i class="fa-solid fa-trash"></i>
                 </button>
@@ -51,10 +48,10 @@
                 <div class="flex flex-column">
                     <div class="bg-light rounded-2 border border-primary d-flex flex-column align-items-center w-100 py-5">
                         <div class="rounded-circle avatar"
-                             style='background-image: url("@Url.Content($"~/images/Snackbar/{Model.Avatar}")")'>
+                             style='background-image: url("@Url.Content($"~/images/User/{Model.Avatar}")")'>
                         </div>
 
-                        <h5 class="text-primary">
+                        <h5 class="text-primary mb-0">
                             @Model.DisplayName
                         </h5>
 
@@ -81,13 +78,9 @@
             </div>
             <div class="col-12 col-md-8 col-lg-9">
                 <div class="d-flex flex-column">
-                    <div class="bg-light rounded-2 border border-primary w-100 cover mb-4"
-                         style="background-image: url('@Url.Content($"~/images/SnackBar/{Model.CoverImage}")');">
-                    </div>
-
                     <div class="bg-light rounded-2 border border-primary d-flex flex-column align-items-center w-100 py-2 px-3 mb-4">
                         <span class="text-primary form-text w-100" style="font-weight: 500">
-                            Thông tin quầy thức ăn
+                            Thông tin khách hàng
                         </span>
 
                         <div class="w-100 mt-1 px-2">
@@ -104,13 +97,8 @@
                                 </tr>
 
                                 <tr>
-                                    <th>Ngày sinh chủ sở hữu</th>
+                                    <th>Ngày sinh</th>
                                     <td>@Model.Dob.ToString("dd/MM/yyyy")</td>
-                                </tr>
-
-                                <tr>
-                                    <th>Mô tả</th>
-                                    <td>@Model.Description</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -119,17 +107,7 @@
 
                     <div class="bg-light rounded-2 border border-primary d-flex flex-column align-items-center w-100 py-2 px-3 mb-4">
                         <span class="text-primary form-text w-100" style="font-weight: 500">
-                            Sản phẩm
-                        </span>
-
-                        <a asp-action="Products" asp-route-id="@Model.Id" class="text-decoration-underline text-primary mt-1 mb-3">
-                            Xem sản phẩm
-                        </a>
-                    </div>
-
-                    <div class="bg-light rounded-2 border border-primary d-flex flex-column align-items-center w-100 py-2 px-3 mb-4">
-                        <span class="text-primary form-text w-100" style="font-weight: 500">
-                            Đơn hàng
+                            Đơn hàng đã đặt
                         </span>
 
                         <a asp-action="Orders" asp-route-id="@Model.Id" class="text-decoration-underline text-primary mt-1 mb-3">
@@ -143,16 +121,17 @@
 </div>
 
 @section Styles {
-    <link rel="stylesheet" href="~/console/admin/snackbars/details.css">
+    <link rel="stylesheet" href="~/console/admin/customers/details.css">
 }
 
-@section Scripts {
+@section Scripts
+{
     <script>
-            let errorMessage = '';
-            @if (TempData["ErrorMessage"] is not null)
-            {
-                @Html.Raw($"errorMessage = '{TempData["ErrorMessage"]!.ToString()}'")
-            }
+        let errorMessage = '';
+        @if (TempData["ErrorMessage"] is not null)
+        {
+            @Html.Raw($"errorMessage = '{TempData["ErrorMessage"]!.ToString()}'")
+        }
     </script>
-    <script src="~/console/admin/snackbars/details.js"></script>
+    <script src="~/console/admin/customers/details.js"></script>
 }

@@ -1,0 +1,153 @@
+@model IEnumerable<AnVatCanThoWeb.Areas.Admin.ViewModels.Snackbars.OrderViewModel>
+
+@{
+    var snackbar = (ViewData["Snackbar"] as SnackBar)!;
+}
+<h1 class="mt-4">Thông tin đơn hàng quầy đồ ăn vặt</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">
+        <a asp-action="Index" asp-controller="Home" asp-area="Admin">Trang chủ</a>
+    </li>
+    <li class="breadcrumb-item">
+        <a asp-action="Index" asp-controller="Snackbars" asp-area="Admin">Quầy đồ ăn vặt</a>
+    </li>
+    <li class="breadcrumb-item active">@snackbar.DisplayName</li>
+</ol>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link" asp-action="Details" asp-route-id="@snackbar.Id">
+                    Thông tin tổng quan
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-action="Products" asp-route-id="@snackbar.Id">Sản phẩm</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="#">Đơn hàng</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <a class="btn btn-outline-danger" asp-action="Index">
+            <i class="fa-solid fa-angle-left"></i>
+            Trở về
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="d-flex flex-column">
+            @if (!Model.Any())
+            {
+                <div class="d-flex justify-content-center text-primary fw-semibold">
+                    Không có đơn hàng nào
+                </div>
+            }
+            @foreach (var order in Model)
+            {
+                <div class="card mb-2">
+                    <div class="card-header">
+                        <h5 class="text-primary fw-bold d-flex flex-row align-items-center gap-2">
+                            Đơn hàng #@order.Id
+                            @if (!order.Status)
+                            {
+                                <span class="badge text-bg-danger" style="font-size: 11px; height: auto">
+                                    Chưa xử lý
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge text-bg-success" style="font-size: 11px; height: auto">
+                                    Đã xử lý
+                                </span>
+                            }
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <span class="text-primary fw-semibold">
+                                Mã khách hàng:
+                            </span>
+                            <span class="ms-1">#@order.CustomerId</span>
+
+                            <span class="text-primary fw-semibold ms-3">
+                                Tên khách hàng:
+                            </span>
+                            <span class="ms-1">@order.CustomerName</span>
+
+                            <a href="#" class="ms-3">
+                                Xem khách hàng
+                            </a>
+                        </div>
+
+                        <div class="d-flex mb-2">
+                            <span class="text-primary fw-semibold">
+                                Địa chỉ giao hàng:
+                            </span>
+                            <span class="ms-1">@order.Address</span>
+                        </div>
+
+                        <table class="dataTable display">
+                            <thead>
+                            <tr>
+                                <th colspan="5">
+                                    <span class="text-primary fw-semibold">
+                                        Chi tiết đơn hàng
+                                    </span>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Tên sản phẩm</th>
+                                <th scope="col">Số lượng</th>
+                                <th scope="col">Đơn giá</th>
+                                <th scope="col">Thành tiền</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @{
+                                var i = 1;
+                                var total = 0;
+                            }
+                            @foreach (var detail in order.OrderDetails)
+                            {
+                                var detailTotal = detail.Price * 1000 * detail.Quantity;
+                                total += detailTotal;
+                                <tr>
+                                    <th>@i</th>
+                                    <td>
+                                        <a asp-action="ProductDetails" asp-route-id="@snackbar.Id" asp-route-productId="@detail.ProductId">
+                                            @detail.ProductName
+                                        </a>
+                                    </td>
+                                    <td>@detail.Quantity</td>
+                                    <td>@((detail.Price * 1000).ToString("#,###,###,###")) VND</td>
+                                    <td>@(detailTotal.ToString("#,###,###,###")) VND</td>
+                                </tr>
+                            }
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="5">
+                                    <span class="d-flex justify-content-end w-100 fw-semibold">
+                                        Tổng thành tiền: @(total.ToString("#,###,###,###")) VND
+                                    </span>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css"/>
+}
