@@ -1,4 +1,13 @@
-﻿<!DOCTYPE html>
+﻿@using AnVatCanTho.DataAccess.Data
+@inject ApplicationDbContext _dbContext
+
+@{
+    // Get Snack Bar from database
+    var snackBarList = _dbContext.SnackBars.Select(s => s).ToList();
+}
+
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -8,6 +17,13 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/AnVatCanThoWeb.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+
+    <!-- Libraries Stylesheet -->
+    <link href="~/lib/animate/animate.min.css" rel="stylesheet">
+    <link href="~/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="~/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <header class="header">
@@ -21,7 +37,16 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <div class="navbar-nav ms-auto py-0 pe-4">
-                    <a href="index.html" class="nav-item nav-link active">Home</a>
+                    <a href="@Url.Action("Index", "Home")" class="nav-item nav-link">Home</a>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Snack Bars</a>
+                        <div class="dropdown-menu m-0">
+                            @foreach (var snackBar in snackBarList)
+                            {
+                                <a href="@Url.Action("IndexSnackBar", "SnackBar", new { snackBarId = @snackBar.Id })" class="dropdown-item" style="color: #212529;">@snackBar.DisplayName</a>
+                            }
+                        </div>
+                    </div>
                     <a href="about.html" class="nav-item nav-link">About</a>
                     <a href="service.html" class="nav-item nav-link">Service</a>
                     <a href="menu.html" class="nav-item nav-link">Menu</a>
@@ -35,7 +60,7 @@
                     </div>
                     <a href="contact.html" class="nav-item nav-link">Contact</a>
                 </div>
-                <a href="" class="btn btn-primary py-2 px-4" style="background: #FEA116;">Book A Table</a>
+                <a href="" class="btn btn-primary py-2 px-4" style="background: #FEA116; border: none;">Book A Table</a>
             </div>
         </nav>
     </header>
@@ -78,7 +103,7 @@
                     </div>
                     <div class="col-lg-3 col-md-6">
                         <h4 class="section-title ff-secondary text-start fw-normal mb-4" style="color: #FEA116;">Newsletter</h4>
-                        <p>Dolor amet sit justo amet elitr clita ipsum elitr est.</p>
+                        <p>Dive into mouthwatering recipes, discover hidden gems in the food scene, and stay updated on the latest trends.</p>
                         <div class="position-relative mx-auto" style="max-width: 400px;">
                             <input class="form-control w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
                             <button type="button" class="btn py-2 position-absolute top-0 end-0 mt-2 me-2" style="background: #FEA116; color: #FFF;">SignUp</button>
@@ -112,6 +137,19 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script src="~/lib/wow/wow.min.js"></script>
+    <script src="~/lib/easing/easing.min.js"></script>
+    <script src="~/lib/waypoints/waypoints.min.js"></script>
+    <script src="~/lib/counterup/counterup.min.js"></script>
+    <script src="~/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="~/lib/tempusdominus/js/moment.min.js"></script>
+    <script src="~/lib/tempusdominus/js/moment-timezone.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="~/js/main.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+        
 </body>
 </html>
