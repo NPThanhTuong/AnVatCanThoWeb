@@ -83,5 +83,52 @@ namespace AnVatCanThoWeb.Controllers
                 return RedirectToAction(actionName: "Index", controllerName: "Home");
             }
         }
+        [HttpGet]
+        public IActionResult Register(string? ReturnUrl = null)
+        {
+            ViewBag.ReturnUrl = ReturnUrl;
+
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterViewModel vm)
+        {
+            var email = await _db.Customers.SingleOrDefaultAsync(u => u.Email == vm.Email);
+            if (email != null)
+            {
+                ModelState.AddModelError("Email", "Email này đã được đăng ký");
+                return View(vm);
+            }
+            var sdt = await _db.Customers.SingleOrDefaultAsync(u => u.Tel == vm.Tel);
+            if (sdt != null)
+            {
+                ModelState.AddModelError("Tel", "Số điện thoại này đã được đăng ký");
+                return View(vm);
+            }
+            if(ModelState.IsValid)
+            {
+                var customer = new AnVatCanTho.Models.Customer
+                {
+                    Username = vm.Username,
+                    Tel = vm.Tel,
+                    Email = vm.Email,
+                    Password = BCrypt.Net.BCrypt.HashPassword(vm.Password),
+                    Dob = (DateTime)vm.Dob,
+                    DisplayName = vm.Username
+                };
+                _db.Customers.Add(customer);
+                await _db.SaveChangesAsync();
+                ViewBag.RegisterSuccess = true;
+                return View(vm);
+            }
+            return View(vm);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(ApplicationAuthenticationScheme.UserScheme);
+            return RedirectToAction(actionName: "Index", controllerName: "Home");
+        }
     }
 }
