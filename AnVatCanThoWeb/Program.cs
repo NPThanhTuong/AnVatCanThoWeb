@@ -1,10 +1,13 @@
 using AnVatCanTho.DataAccess.Data;
+using AnVatCanThoWeb.Common;
 using AnVatCanThoWeb.Common.Authentication;
+using DotnetGeminiSDK;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -12,6 +15,16 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+    builder.Services.Configure<GeminiSettings>(
+        builder.Configuration.GetSection(GeminiSettings.SectionName));
+    builder.Services.AddGeminiClient(c =>
+    {
+        using var serviceProvider = builder.Services.BuildServiceProvider();
+        var geminiSettings = serviceProvider.GetService<IOptions<GeminiSettings>>()!.Value;
+        c.ApiKey = geminiSettings.ApiKey;
+        c.TextBaseUrl = geminiSettings.TextBaseUrl;
+    });
+    
     builder.Services.AddAuthentication(o =>
         {
             o.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
