@@ -80,7 +80,7 @@
                                                         <div style="width: 100px;">
                                                             <p class="mb-0 totalPriceItem" id="totalPrice_@item.Id">@((item.UnitPrice * quantity * 1000).ToString("#,###")) VND</p>
                                                         </div>
-                                                        <a href="#!" class="text-danger"><i class="fas fa-trash-alt"></i></a>
+                                                        <button class="btn btn-danger" onclick="HandleDeleteFromCart(@item.Id)"><i class="fas fa-trash-alt"></i></button>
                                                     </div>
                                                 </div>
                                             </div>

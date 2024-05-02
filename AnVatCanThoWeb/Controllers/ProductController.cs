@@ -9,7 +9,6 @@ using PusherServer;
 using Microsoft.AspNetCore.Authorization;
 using AnVatCanThoWeb.Common.Authentication;
 using Newtonsoft.Json;
-using Microsoft.AspNetCore.Http;
 
 namespace AnVatCanThoWeb.Controllers
 {

@@ -1,6 +1,7 @@
 ﻿function HandleSortProduct(event) {
     const url = new URL(window.location.href);
     url.searchParams.set('sort', event.target.value);
+    url.searchParams.set('page', 1);
     window.location = url;
 }
 

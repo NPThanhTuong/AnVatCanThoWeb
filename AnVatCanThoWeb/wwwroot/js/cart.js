@@ -1,4 +1,4 @@
-function HandleChangeQuantity(event, unitPrice, selectorPrice, productId) {
+﻿function HandleChangeQuantity(event, unitPrice, selectorPrice, productId) {
     const quantity = parseInt(event.target.value);
     let total = 0;
     $.ajax({
@@ -27,6 +27,22 @@ function HandleChangeQuantity(event, unitPrice, selectorPrice, productId) {
             console.log(res)
         }
     });
-    
+}
 
+function HandleDeleteFromCart(productId) {
+    $.ajax({
+        method: "POST",
+        url: "/Product/DeleteFromCart",
+        data: {
+            id: productId
+        },
+        success: function (data) {
+            $("#cart-amount").text(data.itemAmount);
+            toastr.success("Đã xóa sản phẩm khỏi giỏ hành thành công.");
+            location.reload();
+        },
+        error: function (res) {
+            console.log(res);
+        }
+    })
 }

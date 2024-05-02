@@ -2,6 +2,7 @@
 @using AnVatCanThoWeb.ViewModels
 @using Newtonsoft.Json
 @using Microsoft.AspNetCore.Http;
+@using System.Security.Claims
 @inject IHttpContextAccessor HttpContextAccessor
 <!DOCTYPE html>
 <html lang="en">
@@ -25,6 +26,12 @@
 
 </head>
 <body>
+    @{
+        // Get user login
+        string userId = User.Claims.Where(c => c.Type == ClaimTypes.Sid).Select(c => c.Value).SingleOrDefault();
+        string userDisplayName = User.Claims.Where(c => c.Type == ClaimTypes.Name).Select(c => c.Value).SingleOrDefault();
+        string userAvatar = User.Claims.Where(c => c.Type == ClaimTypes.UserData).Select(c => c.Value).SingleOrDefault();
+    }
     <header class="header">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 px-lg-5 py-3 py-lg-0">
             <a href="" class="navbar-brand p-0">
@@ -37,7 +44,7 @@
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <div class="navbar-nav ms-auto py-0 pe-4">
                     <a asp-controller="Home" asp-action="Index" class="nav-item nav-link active">Trang chủ</a>
-                    <a asp-controller="Product" asp-action="Index" class="nav-item nav-link">Sản phẩm</a>
+                    <a asp-controller="Product" asp-action="Index" class="nav-item nav-link active">Sản phẩm</a>
                     @* <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                     <div class="dropdown-menu m-0">
@@ -56,17 +63,38 @@
                         }
                         cartcount = cartList.Count;
                     }
-                    <a asp-controller="Product" asp-action="Cart" class="nav-item nav-link">
+                    <a asp-controller="Product" asp-action="Cart" class="nav-item nav-link active">
                         Giỏ hàng
                         <span class="badge bg-light text-dark border border-light rounded-circle" id="cart-amount">@cartcount</span>
                     </a>
                 </div>
-                <a asp-controller="Auth"
-                   asp-action="Login"
-                   class="btn btn-primary py-2 px-4"
-                   style="background: #FEA116; border: none;">
-                    Đăng nhập
-                </a>
+                @if (string.IsNullOrEmpty(userId))
+                {
+                    <a asp-controller="Auth"
+                       asp-action="Login"
+                       class="btn btn-primary py-2 px-4"
+                       style="background: #FEA116; border: none;">
+                        Đăng nhập
+                    </a>
+                }
+                else
+                {
+                    <div class="dropdown pe-5">
+                        <img src="@Url.Content($"~/images/User/{userAvatar}")"
+                             alt="User avatar"
+                             class="rounded-circle"
+                             width="36"
+                             height="36"
+                             id="dropdownUserMenu"
+                             data-bs-toggle="dropdown"
+                             aria-expanded="false" />
+                        <span class="ms-2 text-white">@userDisplayName</span>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownUserMenu">
+                            <li><a class="dropdown-item" href="#">Hồ sơ</a></li>
+                            <li><a class="dropdown-item" href="#">Đăng xuất</a></li>
+                        </ul>
+                    </div>
+                }
             </div>
         </nav>
     </header>
