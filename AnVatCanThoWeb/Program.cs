@@ -48,6 +48,15 @@ var builder = WebApplication.CreateBuilder(args);
     {
         o.DisableDataAnnotationsValidation = true;
     });
+
+    builder.Services.AddDistributedMemoryCache();
+
+    builder.Services.AddSession(options =>
+    {
+        options.IdleTimeout = TimeSpan.FromMinutes(10);
+        options.Cookie.HttpOnly = true;
+        options.Cookie.IsEssential = true;
+    });
 }
 
 var app = builder.Build();
@@ -66,7 +75,9 @@ var app = builder.Build();
     
     app.UseAuthentication();
     app.UseAuthorization();
-    
+
+    app.UseSession();
+
     app.MapControllerRoute(
         name: "AppArea",
         pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");

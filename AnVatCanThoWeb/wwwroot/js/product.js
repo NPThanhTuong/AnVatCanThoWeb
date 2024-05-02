@@ -30,8 +30,20 @@ function SpecificPage(pageNum) {
     window.location = url;
 }
 
-//Toggle heart icon
-function AddToHeartList(idBtn) {
-    const icon = document.querySelector('#' + idBtn + ' i');
-    icon.classList.toggle('fas');
+
+function AddToCart(productId) {
+    $.ajax({
+        type: 'POST',
+        url: '/Product/AddToCart',
+        data: { id: productId },
+        success: function (data) {
+            $("#cart-amount").text(data.itemAmount);
+            toastr.success("Thêm sản phẩm vào giỏ hàng thành công");
+        },
+        error: function (res) {
+            if (res.status === 401) {
+                window.location = "/Auth/Login?ReturnUrl=%2FProduct";
+            }
+        }
+    });
 }

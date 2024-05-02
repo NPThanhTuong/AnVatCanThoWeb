@@ -8,6 +8,8 @@ using System.Text;
 using PusherServer;
 using Microsoft.AspNetCore.Authorization;
 using AnVatCanThoWeb.Common.Authentication;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
 
 namespace AnVatCanThoWeb.Controllers
 {
@@ -35,6 +37,7 @@ namespace AnVatCanThoWeb.Controllers
             {
                 str2 = str2.Remove(str2.IndexOf("?"), 1);
             }
+
             return str2;
         }
 
@@ -73,7 +76,17 @@ namespace AnVatCanThoWeb.Controllers
             // Tìm tên của sản phẩm
             if (!string.IsNullOrEmpty(search))
             {
-                productListQuery = productListQuery.Where(p => ConvertToUnSign(p.Name).IndexOf(ConvertToUnSign(search), StringComparison.CurrentCultureIgnoreCase) >= 0);
+                string searchUnsign = ConvertToUnSign(search);
+
+                //productListQuery = productListQuery.Where(p => ConvertToUnSign(p.Name).Contains(searchUnsign, StringComparison.CurrentCultureIgnoreCase));
+                productListQuery = productListQuery.Where(delegate (Product p)
+                {
+                    if (ConvertToUnSign(p.Name).Contains(searchUnsign, StringComparison.CurrentCultureIgnoreCase))
+                        return true;
+                    else
+                        return false;
+                }).AsQueryable();
+
             }
 
             // Những product thỏa điều kiện
@@ -159,8 +172,8 @@ namespace AnVatCanThoWeb.Controllers
                 .Where(c => c.ProductId == product.Id)
                 .AsQueryable();
 
-            commentQuery = (string.IsNullOrEmpty(sort) || sort == "desc") 
-                            ? commentQuery.OrderByDescending(p => p.CreatedAt) 
+            commentQuery = (string.IsNullOrEmpty(sort) || sort == "desc")
+                            ? commentQuery.OrderByDescending(p => p.CreatedAt)
                             : commentQuery.OrderBy(p => p.CreatedAt);
 
             // Chi tiết sản phẩm chính
@@ -208,7 +221,7 @@ namespace AnVatCanThoWeb.Controllers
             // Lấy giá trị từ appsettings.json
             var AppVar = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("AppSettings");
 
-            
+
 
             // Thêm bình luận vào DB
             _db.Comments.Add(comment);
@@ -223,6 +236,11 @@ namespace AnVatCanThoWeb.Controllers
             ITriggerResult result = await pusher.TriggerAsync("comments_channel", "push_comment_event", new { comment, CustomerDisplayName, CustomerAvatar });
 
             return Json(new { success = true });
+        }
+
+        public ActionResult Cart()
+        {
+            return View();
         }
 
         #region API
@@ -251,6 +269,98 @@ namespace AnVatCanThoWeb.Controllers
 
             return Json(new { data = comments });
         }
+
+        [HttpPost]
+        public IActionResult AddToCart(int id)
+        {
+            List<Product> cartList;
+            if (HttpContext.Session.Get("ShoppingCart") == null)
+            {
+                cartList = new List<Product>();
+
+                Product product = _db.Products.Include(p => p.SnackBar)
+                    .Include(p => p.ProductImages)
+                    .FirstOrDefault(p => p.Id == id);
+
+                cartList.Add(product);
+
+
+                HttpContext.Session.SetString("ShoppingCart", JsonConvert.SerializeObject(cartList, Formatting.Indented, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                }));
+                
+                HttpContext.Session.SetInt32($"Quantity_{product.Id}", 1);
+            }
+            else
+            {
+                bool flag = false;
+
+                cartList = JsonConvert.DeserializeObject<List<Product>>(
+                    HttpContext.Session.GetString("ShoppingCart")
+                );
+                foreach (Product cartItem in cartList)
+                {
+                    if (cartItem.Id == id)
+                    {
+                        int oldQuantity = (int)HttpContext.Session.GetInt32($"Quantity_{id}");
+                        HttpContext.Session.SetInt32($"Quantity_{id}", oldQuantity + 1);
+                        flag = true;
+                        break;
+                    }
+                }
+                if (!flag)
+                {
+                    Product product = _db.Products.Include(p => p.SnackBar)
+                        .Include(p => p.ProductImages)
+                        .FirstOrDefault(p => p.Id == id);
+
+                    cartList.Add(product);
+
+                    HttpContext.Session.SetString("ShoppingCart", JsonConvert.SerializeObject(cartList, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    }));
+                    HttpContext.Session.SetInt32($"Quantity_{product.Id}", 1);
+                }
+            }
+
+            List<Product> ls = JsonConvert.DeserializeObject<List<Product>>(
+                    HttpContext.Session.GetString("ShoppingCart")
+                );
+
+            int cartCount = ls.Count;
+            
+
+            return Json(new { ItemAmount = cartCount });
+        }
+
+        [HttpPost]
+        public ActionResult DeleteFromCart(int id)
+        {
+            List<Product> cartList = JsonConvert.DeserializeObject<List<Product>>(
+                    HttpContext.Session.GetString("ShoppingCart")
+                );
+            foreach(Product item in cartList)
+            {
+                if(item.Id == id) 
+                {
+                    cartList.Remove(item);
+                    HttpContext.Session.SetString("ShoppingCart", JsonConvert.SerializeObject(cartList, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    }));
+                    HttpContext.Session.Remove($"Quantity_{id}");
+
+                    break;
+                }
+            }
+
+            int cartCount = cartList.Count;
+
+            return Json(new { ItemAmount = cartCount });
+        }
+
         #endregion
     }
 }
