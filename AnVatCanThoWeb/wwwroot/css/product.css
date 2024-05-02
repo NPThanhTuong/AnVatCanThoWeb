@@ -26,14 +26,14 @@
     color: var(--primary-color);
 }
 
-.product-heart-btn {
-    color: #d7443e;
+.product-cart-btn {
+    color: var(--primary-color);
 }
 
-    .product-heart-btn:hover {
+    .product-cart-btn:hover {
         cursor: pointer;
         opacity: 0.8;
-        color: #d7443e;
+        color: var(--primary-color);
     }
 
 .text-dark-gray {
