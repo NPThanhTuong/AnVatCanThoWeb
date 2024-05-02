@@ -123,8 +123,7 @@ namespace AnVatCanThoWeb.Controllers
             }
             return View(vm);
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpGet]
         public async Task<ActionResult> Logout()
         {
             await HttpContext.SignOutAsync(ApplicationAuthenticationScheme.UserScheme);

@@ -39,7 +39,7 @@
                             <span asp-validation-for="Tel" class="text-danger"></span>
                         </div>
                         <div class="form-floating mb-2 col-8 mx-auto">
-                            <input asp-for="Dob" type="datetime-local" class="form-control" id="Dob" placeholder="Ngày sinh">
+                            <input asp-for="Dob" type="date" class="form-control" id="Dob" placeholder="Ngày sinh" min="1900-01-01" max="2099-12-31">
                             <label asp-for="Dob" for="Dob">Ngày sinh</label>
                             <span asp-validation-for="Dob" class="text-danger"></span>
                         </div>
