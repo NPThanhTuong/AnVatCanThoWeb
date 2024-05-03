@@ -61,7 +61,7 @@
                             @Html.DisplayFor(modelItem => item.Stock)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.UnitPrice)
+                            @(item.UnitPrice*1000)
                         </td>
                         <td>
                             <a href="@Url.Action("EditProduct","Products", new { id = item.Id })" class="btn btn-primary hover">

@@ -137,5 +137,9 @@ public class AuthController : Controller
         List<Ward> wards = await _db.Wards.Where(w => w.DistrictName == districtName).ToListAsync();
         return Json(wards);
     }
-
+    public async Task<IActionResult> GetDistricts()
+    {
+        List<District> Districts = await _db.Districts.ToListAsync();
+        return Json(Districts);
+    }
 }
