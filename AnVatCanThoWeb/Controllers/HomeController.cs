@@ -1,12 +1,15 @@
 ﻿using AnVatCanTho.DataAccess.Data;
 using AnVatCanTho.Models;
+using AnVatCanThoWeb.Common.Authentication;
 using AnVatCanThoWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace AnVatCanThoWeb.Controllers
 {
+    [Authorize(AuthenticationSchemes = ApplicationAuthenticationScheme.UserScheme)]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -16,6 +19,7 @@ namespace AnVatCanThoWeb.Controllers
             _logger = logger;
         }
 
+        [AllowAnonymous]
         public IActionResult Index()
         {
             return View();

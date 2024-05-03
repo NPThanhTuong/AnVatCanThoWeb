@@ -35,8 +35,8 @@
     }
     <header class="header">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 px-lg-5 py-3 py-lg-0">
-            <a href="" class="navbar-brand p-0">
-                <h1 class="m-0" style="color: #FEA116;"><i class="fa fa-utensils me-3"></i>Restoran</h1>
+            <a asp-controller="Home" asp-action="Index" class="navbar-brand p-0">
+                <h1 class="m-0" style="color: #FEA116;"><i class="fa fa-utensils me-3"></i>AnVatCanTho</h1>
                 <!-- <img src="img/logo.png" alt="Logo"> -->
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
@@ -47,14 +47,7 @@
 
                     <a asp-controller="Home" asp-action="Index" class="nav-item nav-link active">Trang chủ</a>
                     <a asp-controller="Product" asp-action="Index" class="nav-item nav-link active">Sản phẩm</a>
-                    @* <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                    <div class="dropdown-menu m-0">
-                    <a href="booking.html" class="dropdown-item">Booking</a>
-                    <a href="team.html" class="dropdown-item">Our Team</a>
-                    <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                    </div>
-                    </div> *@
+                    
                     @{
                         int cartcount = 0;
                         List<Product> cartList = new List<Product>();
@@ -94,7 +87,7 @@
                         <span class="ms-2 text-white">@userDisplayName</span>
                         <ul class="dropdown-menu" aria-labelledby="dropdownUserMenu">
                             <li><a class="dropdown-item" href="#">Hồ sơ</a></li>
-                            <li><a class="dropdown-item" href="#">Đăng xuất</a></li>
+                            <li><a class="dropdown-item" asp-controller="Auth" asp-action="Logout">Đăng xuất</a></li>
                         </ul>
                     </div>
                 }
