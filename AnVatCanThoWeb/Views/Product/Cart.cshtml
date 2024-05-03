@@ -1,0 +1,132 @@
+﻿@using AnVatCanTho.Models
+@using AnVatCanThoWeb.ViewModels
+@using Newtonsoft.Json
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+
+<section class="h-100" style="background-color: #eee;">
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body p-4">
+
+                        <div class="row">
+
+                            <div class="col-lg-9">
+                                <h5 class="mb-3">
+                                    <a asp-controller="Product" asp-action="Index" class="text-body">
+                                        <i class="fas fa-long-arrow-alt-left me-2"></i>Tiếp tục chọn món ăn
+                                    </a>
+                                </h5>
+                                <hr>
+                                @* Render product *@
+                                @{
+                                    double total = 0;
+                                    List<Product> cartList = new List<Product>();
+                                    string shoppingCartJson = HttpContextAccessor.HttpContext.Session.GetString("ShoppingCart");
+                                    if (!string.IsNullOrEmpty(shoppingCartJson))
+                                    {
+                                        cartList = JsonConvert.DeserializeObject<List<Product>>(shoppingCartJson);
+                                    }
+                                }
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <div>
+                                        <p class="mb-1">Giỏ hàng</p>
+                                        <p class="mb-0">Bạn có @cartList.Count sản phẩm trong giỏ hàng</p>
+                                    </div>
+                                </div>
+
+
+                                @if (cartList.Count > 0)
+                                {
+                                    foreach (Product item in cartList)
+                                    {
+                                        var productImg = item.ProductImages.FirstOrDefault();
+                                        var imgPath = productImg is null ? "no-image.jpg" : productImg.PathName;
+                                        int quantity = (int)HttpContextAccessor.HttpContext.Session.GetInt32($"Quantity_{item.Id}");
+
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div class="d-flex flex-row align-items-center">
+                                                        <div>
+                                                            <img src="@Url.Content($"~/images/Products/{imgPath}")"
+                                                                 class="img-fluid rounded-3" alt="Shopping item" style="width: 65px;">
+                                                        </div>
+                                                        <div class="ms-3">
+                                                            <h5>@item.Name</h5>
+                                                            <p class="small mb-0">@item.SnackBar.DisplayName</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex flex-row align-items-center">
+                                                        <div style="width: 64px;">
+                                                            <p class="fw-light mb-0">
+                                                                <input type="number"
+                                                                       class="form-control"
+                                                                       min="1"
+                                                                       id="quantityInput_@item.Id"
+                                                                       max="50"
+                                                                       step="1"
+                                                                       value="@quantity"
+                                                                       aria-label="Quantity"
+                                                                       aria-describedby="addon-wrapping"
+                                                                       onchange="HandleChangeQuantity(event, @item.UnitPrice * 1000, 'totalPrice_@item.Id', @item.Id)" />
+                                                            </p>
+                                                        </div>
+                                                        <div style="width: 100px;">
+                                                            <p class="mb-0">@((item.UnitPrice * 1000).ToString("#,###")) VND</p>
+                                                        </div>
+                                                        <div style="width: 100px;">
+                                                            <p class="mb-0 totalPriceItem" id="totalPrice_@item.Id">@((item.UnitPrice * quantity * 1000).ToString("#,###")) VND</p>
+                                                        </div>
+                                                        <button class="btn btn-danger" onclick="HandleDeleteFromCart(@item.Id)"><i class="fas fa-trash-alt"></i></button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        total += item.UnitPrice * quantity;
+                                    }
+                                }
+                                else
+                                {
+                                    <p class="text-muted fs-4">Không có sản phẩm nào trong giỏ hàng</p>
+                                }
+                            </div>
+                            <div class="col-lg-3">
+
+                                <div class="card bg-primary text-white rounded-3">
+                                    <div class="card-body">
+                                       
+                                        <div class="d-flex justify-content-between">
+                                            <p class="mb-2">Tạm tính</p>
+                                            <p class="mb-2 totalPrice">@((total * 1000).ToString("#,###")) VND</p>
+                                        </div>
+
+                                        <div class="d-flex justify-content-between mb-4">
+                                            <p class="mb-2">Tổng</p>
+                                            <p class="mb-2 totalPrice">@((total * 1000).ToString("#,###")) VND</p>
+                                        </div>
+
+                                        <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-success btn-block btn-lg">
+                                            <span>Đặt hàng <i class="fas fa-long-arrow-alt-right ms-2"></i></span>
+                                        </button>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="/js/cart.js"></script>
+}

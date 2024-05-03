@@ -1,0 +1,108 @@
+@model AnVatCanThoWeb.Areas.Admin.ViewModels.Customers.GetAllCustomersResponse
+
+<h1 class="mt-4">Danh sách khách hàng</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">
+        <a asp-action="Index" asp-controller="Home" asp-area="Admin">Trang chủ</a>
+    </li>
+    <li class="breadcrumb-item active">Khách hàng</li>
+</ol>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <div class="d-flex align-items-center justify-content-between">
+            <form asp-action="Index" method="get">
+                <div class="input-group rounded" style="min-width: 200px">
+                    <input type="search"
+                           name="keyword"
+                           class="form-control rounded"
+                           placeholder="Tìm kiếm"
+                           aria-label="Search"
+                           value="@ViewData["CurrentKeyword"]"
+                           aria-describedby="search-addon"/>
+                    <button class="input-group-text border-0">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <table id="my-datatable" class="display">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Tên đăng nhập</th>
+                <th>Tên hiển thị</th>
+                <th>Số điện thoại</th>
+                <th>Email</th>
+                <th>Địa chỉ</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var customer in Model.Data)
+            {
+                <tr>
+                    <td>@customer.Id</td>
+                    <td>@customer.Username</td>
+                    <td>@customer.DisplayName</td>
+                    <td>@customer.Tel</td>
+                    <td>@customer.Email</td>
+                    <td>
+                        @foreach (var addr in customer.Addresses)
+                        {
+                            <div>
+                                @(addr.NoAndStreet), @(addr.WardName), @addr.DistrictName
+                            </div>
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@customer.Id" type="button" class="btn btn-primary">
+                            <i class="fa-solid fa-eye"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card-footer">
+        @{
+            var prevDisabled = !Model.HasPrevious ? "disabled" : "";
+            var nextDisabled = !Model.HasNext ? "disabled" : "";
+        }
+
+        <nav aria-label="Page navigation example">
+            <ul class="pagination mb-0">
+                <li class="page-item @prevDisabled">
+                    <a class="page-link"
+                       asp-route-pageIndex="@(Model.PageIndex - 1)"
+                       asp-route-currentKeyword="@ViewData["CurrentKeyword"]"
+                       asp-action="Index">
+                        Trang trước
+                    </a>
+                </li>
+                <li class="page-item @nextDisabled">
+                    <a class="page-link"
+                       asp-route-pageIndex="@(Model.PageIndex + 1)"
+                       asp-route-currentKeyword="@ViewData["CurrentKeyword"]"
+                       asp-action="Index">
+                        Trang kế
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css"/>
+}
+
+@section Scripts {
+    <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+    <script src="~/console/admin/customers/scripts.js"></script>
+}

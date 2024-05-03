@@ -39,7 +39,7 @@
         <h5 class="text-primary mt-3">
             Giá tiền
         </h5>
-        <p>@Model.UnitPrice.ToString("#,###,###,###") VND</p>
+        <p>@((Model.UnitPrice * 1000).ToString("#,###,###,###")) VND</p>
 
         <h5 class="text-primary mt-3">
             Số lượng tồn
