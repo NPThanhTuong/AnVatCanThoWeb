@@ -1,5 +1,8 @@
-﻿using AnVatCanThoWeb.Models;
+﻿using AnVatCanTho.DataAccess.Data;
+using AnVatCanTho.Models;
+using AnVatCanThoWeb.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace AnVatCanThoWeb.Controllers
