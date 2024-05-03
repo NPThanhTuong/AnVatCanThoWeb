@@ -4,4 +4,5 @@ public static class ApplicationAuthenticationScheme
 {
     public const string AdminScheme = "Admin";
     public const string SnackBarScheme = "SnackBar";
+    public const string UserScheme = "User";
 }

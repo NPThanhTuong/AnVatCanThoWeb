@@ -103,7 +103,13 @@ namespace AnVatCanTho.DataAccess.Data
                     .HasMaxLength(1024)
                     .HasColumnName("Content");
 
-                entity.Property(e => e.LikeQuantity).HasColumnName("LikeQuantity");
+                entity.Property(e => e.CreatedAt)
+                    .HasDefaultValueSql("getdate()")
+                    .HasColumnName("CreatedAt");
+
+                entity.Property(e => e.LikeQuantity)
+                    .HasDefaultValue(0)
+                    .HasColumnName("LikeQuantity");
 
                 entity.Property(e => e.CustomerId).HasColumnName("Customer_Id");
 
@@ -122,6 +128,8 @@ namespace AnVatCanTho.DataAccess.Data
                 entity.Property(e => e.Id).HasColumnName("Id");
                 entity.Property(e => e.Avatar)
                     .HasMaxLength(256)
+                    .HasDefaultValue("no-avatar.jpg")
+                    .IsRequired(false)
                     .HasColumnName("Avatar");
                 entity.Property(e => e.Dob)
                     .HasColumnType("date")
@@ -347,7 +355,9 @@ namespace AnVatCanTho.DataAccess.Data
                 entity.Property(e => e.SnackBarId).HasColumnName("SnackBar_Id");
                 entity.Property(e => e.ProductId).HasColumnName("Product_Id");
                 entity.Property(e => e.CustomerId).HasColumnName("Customer_Id");
-                entity.Property(e => e.Star).HasColumnName("Star");
+                entity.Property(e => e.Star)
+                    .HasDefaultValue(0.0)
+                    .HasColumnName("Star");
             });
 
             modelBuilder.Entity<SnackBar>(entity =>
@@ -362,6 +372,8 @@ namespace AnVatCanTho.DataAccess.Data
                 entity.Property(e => e.Id).HasColumnName("Id");
                 entity.Property(e => e.Avatar)
                     .HasMaxLength(256)
+                    .HasDefaultValue("no-avatar.jpg")
+                    .IsRequired(false)
                     .HasColumnName("Avatar");
                 entity.Property(e => e.CoverImage)
                     .HasMaxLength(256)
@@ -434,6 +446,8 @@ namespace AnVatCanTho.DataAccess.Data
                 entity.Property(e => e.Id).HasColumnName("Id");
                 entity.Property(e => e.Avatar)
                     .HasMaxLength(256)
+                    .HasDefaultValue("no-avatar.jpg")
+                    .IsRequired(false)
                     .HasColumnName("Avatar");
                 entity.Property(e => e.Dob)
                     .HasColumnType("date")

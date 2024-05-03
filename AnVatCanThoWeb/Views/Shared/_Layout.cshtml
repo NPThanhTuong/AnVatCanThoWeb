@@ -1,12 +1,9 @@
-﻿@using AnVatCanTho.DataAccess.Data
-@inject ApplicationDbContext _dbContext
-
-@{
-    // Get Snack Bar from database
-    var snackBarList = _dbContext.SnackBars.Select(s => s).ToList();
-}
-
-
+﻿@using AnVatCanTho.Models
+@using AnVatCanThoWeb.ViewModels
+@using Newtonsoft.Json
+@using Microsoft.AspNetCore.Http;
+@using System.Security.Claims
+@inject IHttpContextAccessor HttpContextAccessor
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,11 +18,21 @@
     <!-- Libraries Stylesheet -->
     <link href="~/lib/animate/animate.min.css" rel="stylesheet">
     <link href="~/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-
     <!-- Customized Bootstrap Stylesheet -->
     <link href="~/css/bootstrap.min.css" rel="stylesheet">
+    <!-- ToastrJS-->
+    <link href="~/lib//toastr/toastr.min.css" rel="stylesheet" />
+    @RenderSection("Styles", required: false)
+
+
 </head>
 <body>
+    @{
+        // Get user login
+        string userId = User.Claims.Where(c => c.Type == ClaimTypes.Sid).Select(c => c.Value).SingleOrDefault();
+        string userDisplayName = User.Claims.Where(c => c.Type == ClaimTypes.Name).Select(c => c.Value).SingleOrDefault();
+        string userAvatar = User.Claims.Where(c => c.Type == ClaimTypes.UserData).Select(c => c.Value).SingleOrDefault();
+    }
     <header class="header">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 px-lg-5 py-3 py-lg-0">
             <a href="" class="navbar-brand p-0">
@@ -37,38 +44,69 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <div class="navbar-nav ms-auto py-0 pe-4">
-                    <a href="@Url.Action("Index", "Home")" class="nav-item nav-link">Home</a>
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Snack Bars</a>
-                        <div class="dropdown-menu m-0">
-                            @foreach (var snackBar in snackBarList)
-                            {
-                                <a href="@Url.Action("IndexSnackBar", "SnackBar", new { snackBarId = @snackBar.Id })" class="dropdown-item" style="color: #212529;">@snackBar.DisplayName</a>
-                            }
-                        </div>
+
+                    <a asp-controller="Home" asp-action="Index" class="nav-item nav-link active">Trang chủ</a>
+                    <a asp-controller="Product" asp-action="Index" class="nav-item nav-link active">Sản phẩm</a>
+                    @* <div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                    <div class="dropdown-menu m-0">
+                    <a href="booking.html" class="dropdown-item">Booking</a>
+                    <a href="team.html" class="dropdown-item">Our Team</a>
+                    <a href="testimonial.html" class="dropdown-item">Testimonial</a>
                     </div>
-                    <a href="about.html" class="nav-item nav-link">About</a>
-                    <a href="service.html" class="nav-item nav-link">Service</a>
-                    <a href="menu.html" class="nav-item nav-link">Menu</a>
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                        <div class="dropdown-menu m-0">
-                            <a href="booking.html" class="dropdown-item">Booking</a>
-                            <a href="team.html" class="dropdown-item">Our Team</a>
-                            <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                        </div>
-                    </div>
-                    <a href="contact.html" class="nav-item nav-link">Contact</a>
+                    </div> *@
+                    @{
+                        int cartcount = 0;
+                        List<Product> cartList = new List<Product>();
+                        string shoppingCartJson = HttpContextAccessor.HttpContext.Session.GetString("ShoppingCart");
+                        if (!string.IsNullOrEmpty(shoppingCartJson))
+                        {
+                            cartList = JsonConvert.DeserializeObject<List<Product>>(shoppingCartJson);
+                        }
+                        cartcount = cartList.Count;
+                    }
+                    <a asp-controller="Product" asp-action="Cart" class="nav-item nav-link active">
+                        Giỏ hàng
+                        <span class="badge bg-light text-dark border border-light rounded-circle" id="cart-amount">@cartcount</span>
+                    </a>
                 </div>
-                <a href="" class="btn btn-primary py-2 px-4" style="background: #FEA116; border: none;">Book A Table</a>
+
+                @if (string.IsNullOrEmpty(userId))
+                {
+                    <a asp-controller="Auth"
+                       asp-action="Login"
+                       class="btn btn-primary py-2 px-4"
+                       style="background: #FEA116; border: none;">
+                        Đăng nhập
+                    </a>
+                }
+                else
+                {
+                    <div class="dropdown pe-5">
+                        <img src="@Url.Content($"~/images/User/{userAvatar}")"
+                             alt="User avatar"
+                             class="rounded-circle"
+                             width="36"
+                             height="36"
+                             id="dropdownUserMenu"
+                             data-bs-toggle="dropdown"
+                             aria-expanded="false" />
+                        <span class="ms-2 text-white">@userDisplayName</span>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownUserMenu">
+                            <li><a class="dropdown-item" href="#">Hồ sơ</a></li>
+                            <li><a class="dropdown-item" href="#">Đăng xuất</a></li>
+                        </ul>
+                    </div>
+                }
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+
+    @RenderBody()
+    @* <div class="container">
+    <main role="main" class="pb-3">
+    </main>
+    </div> *@
 
     <footer class="footer1">
         <div class="container-fluid bg-dark text-light wow fadeIn" style="padding-bottom: 25px;" data-wow-delay="0.1s">
@@ -76,7 +114,7 @@
                 <div class="row g-5">
                     <div class="col-lg-3 col-md-6">
                         <h4 class="section-title ff-secondary text-start fw-normal mb-4" style="color: #FEA116;">Company</h4>
-                        <a class="btn btn__company" href="" style="color: #FFF;">About Us</a><br/>
+                        <a class="btn btn__company" href="" style="color: #FFF;">About Us</a><br />
                         <a class="btn btn__company" href="" style="color: #FFF;">Contact Us</a><br />
                         <a class="btn btn__company" href="" style="color: #FFF;">Reservation</a><br />
                         <a class="btn btn__company" href="" style="color: #FFF;">Privacy Policy</a><br />
@@ -144,7 +182,12 @@
     <script src="~/lib/counterup/counterup.min.js"></script>
     <script src="~/lib/owlcarousel/owl.carousel.min.js"></script>
 
+    <script src="~/lib/tempusdominus/js/moment.min.js"></script>
+    <script src="~/lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="~/lib/toastr/toastr.min.js"></script>
+
     <!-- Template Javascript -->
+
     <script src="~/js/main.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 

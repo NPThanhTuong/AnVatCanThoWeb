@@ -1,0 +1,78 @@
+﻿@model AnVatCanThoWeb.Areas.SnackBar.ViewModels.Product.CreateProductViewModel;
+
+@{
+    ViewData["Title"] = "EditProduct";
+    Layout = "~/Areas/SnackBar/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h1>Chỉnh sửa sản phẩm</h1>
+
+        <h4>Sản phẩm</h4>
+        <hr />
+            <form asp-action="EditProduct" class="row g-3">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group col-md-6">
+                <label asp-for="Id" class="control-label"></label>
+                <input asp-for="Id" class="form-control" disabled/>
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+                <div class="form-group col-md-6">
+                <label asp-for="SnackBarId" class="control-label"></label>
+                <input asp-for="SnackBarId" class="form-control" disabled value="@ViewData["snackbarid"]"/>
+                <span asp-validation-for="SnackBarId" class="text-danger"></span>
+            </div>
+                <div class="form-group col-md-6">
+                <label asp-for="ProductCategory.Name" class="control-label"></label>
+                <select asp-for="ProductCategoryId" class="form-control" asp-items="@ViewBag.Categories">
+                    <option value="">-- Select Category --</option>
+                </select>
+                <span asp-validation-for="ProductCategoryId" class="text-danger"></span>
+            </div>
+                <div class="form-group col-md-6">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+                <div class="form-group col-md-6">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+                <div class="form-group col-md-6">
+                <label asp-for="Ingredient" class="control-label"></label>
+                <input asp-for="Ingredient" class="form-control" />
+                <span asp-validation-for="Ingredient" class="text-danger"></span>
+            </div>
+                <div class="form-group col-md-6">
+                <label asp-for="Stock" class="control-label"></label>
+                <input asp-for="Stock" class="form-control" />
+                <span asp-validation-for="Stock" class="text-danger"></span>
+            </div>
+                <div class="form-group col-md-6">
+                <label asp-for="UnitPrice" class="control-label"></label>
+                <input asp-for="UnitPrice" class="form-control" />
+                <span asp-validation-for="UnitPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group col-12">
+                <label asp-for="ProductImages" class="control-label">Hình ảnh sản phẩm</label>
+                <a href="@Url.Action("EditProductImages","Products", new { id = Model.Id })" class="btn btn-primary hover">
+                   <i class="fa-solid fa-image">Chỉnh sửa hình ảnh</i>
+                </a>
+                <span asp-validation-for="ProductImages" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Lưu" class="btn btn-primary" />
+                    <span>
+                        <a asp-action="Index" class="btn btn-danger">
+                            <i class="fa-solid fa-arrow-left">Trở về danh sách sản phẩm</i>
+                        </a>
+                    </span>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+

@@ -1,0 +1,83 @@
+@model AnVatCanThoWeb.Areas.Admin.ViewModels.Snackbars.ProductDetailsViewModel
+@{
+    var snackbar = (ViewData["Snackbar"] as SnackBar)!;
+}
+<h1 class="mt-4">Thông tin sản phẩm quầy đồ ăn vặt</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">
+        <a asp-action="Index" asp-controller="Home" asp-area="Admin">Trang chủ</a>
+    </li>
+    <li class="breadcrumb-item">
+        <a asp-action="Index" asp-controller="Snackbars" asp-area="Admin">Quầy đồ ăn vặt</a>
+    </li>
+    <li class="breadcrumb-item active">@snackbar.DisplayName</li>
+</ol>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <a class="btn btn-outline-danger" asp-action="Products" 
+               asp-route-id="@snackbar.Id" 
+               asp-route-productId="@Model.Id">
+                <i class="fa-solid fa-angle-left"></i>
+                Trở về
+            </a>
+
+            <form onsubmit="deleteProduct(event,this)" method="post" asp-action="DeleteProduct">
+                <input type="hidden" name="productId" value="@Model.Id">
+                <input type="hidden" name="snackbarId" value="@snackbar.Id">
+                <button class="btn btn-danger">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="card-body">
+        <h3 class="fw-bold text-primary text-uppercase mb-0">@Model.Name</h3>
+        <span class="form-text">@Model.ProductTypeName - @Model.ProductCategoryName</span>
+
+        <h5 class="text-primary mt-3">
+            Giá tiền
+        </h5>
+        <p>@((Model.UnitPrice * 1000).ToString("#,###,###,###")) VND</p>
+
+        <h5 class="text-primary mt-3">
+            Số lượng tồn
+        </h5>
+        <p>@Model.Stock</p>
+
+        <h5 class="text-primary mt-3">
+            Mô tả
+        </h5>
+        <p>@Model.Description</p>
+
+        <h5 class="text-primary mt-3">
+            Thành phần món ăn/uống
+        </h5>
+        <p>@Model.Ingredient</p>
+
+        <h5 class="text-primary mt-3">
+            Hình ảnh sản phẩm
+        </h5>
+        <span class="d-flex gap-2 mt-3">
+            @foreach (var name in Model.ProductImages)
+            {
+                <div style="width: 150px; height: 150px;" class="shadow-sm">
+                    <img src="@Url.Content($"~/images/Products/{name}")" style="object-fit: cover">
+                </div>
+            }
+        </span>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        let errorMessage = '';
+        @if (TempData["ErrorMessage"] is not null)
+        {
+            @Html.Raw($"errorMessage = '{TempData["ErrorMessage"]!.ToString()}'")
+        }
+    </script>
+    <script src="~/console/admin/snackbars/product-details.js"></script>
+}

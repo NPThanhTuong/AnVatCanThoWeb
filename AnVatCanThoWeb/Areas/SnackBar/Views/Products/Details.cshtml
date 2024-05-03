@@ -1,0 +1,109 @@
+﻿@model AnVatCanTho.Models.Product
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Areas/SnackBar/Views/Shared/_Layout.cshtml";
+}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h1>Thông tin chi tiết sản phẩm</h1>
+            <h4>Sản phẩm</h4>
+            <hr />
+            <dl class="row g-3">
+                <div class="col-md-6">
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Id)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Id)
+                    </dd>
+                </div>
+                <div class="col-md-6">
+                    <dt>
+                        @Html.DisplayNameFor(model => model.SnackBar.DisplayName)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.SnackBar.DisplayName)
+                    </dd>
+                </div>
+                <div class="col-md-6">
+                    <dt>
+                        @Html.DisplayNameFor(model => model.ProductCategory.Name)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.ProductCategory.Name)
+                    </dd>
+                </div>
+                <div class="col-md-6">
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Name)
+                    </dd>
+                </div>
+                <div class="col-md-6">
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Description)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Description)
+                    </dd>
+                </div>
+                <div class="col-md-6">
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Ingredient)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Ingredient)
+                    </dd>
+                </div>
+                <div class="col-md-6">
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Stock)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Stock)
+                    </dd>
+                </div>
+                <div class="col-md-6">
+                    <dt>
+                        @Html.DisplayNameFor(model => model.UnitPrice)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.UnitPrice)
+                    </dd>
+                </div>
+                <div class="col-12">
+                    <dt>
+                        Ảnh sản phẩm
+                    </dt>
+                    <dd>
+                        <div class="container">
+                            <div class="row row-cols-3">
+                                @foreach (var producImage in Model.ProductImages)
+                                {
+                                    <div class="col">
+                                        <img src="@Url.Content("~/images/Products/" + producImage.PathName)" width="150" />
+                                    </div> 
+                                }
+                            </div>
+                        </div>
+                    </dd>
+                </div>
+            </dl>
+            <div>
+                <a href="@Url.Action("EditProduct","Products", new { id = Model.Id })" class="btn btn-primary hover">
+                    <i class="fa-solid fa-pen-to-square">Chỉnh sửa</i>
+                </a>
+                <span>
+                    <a asp-action="Index" class="btn btn-danger">
+                        <i class="fa-solid fa-arrow-left">Trở về danh sách sản phẩm</i>
+                    </a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+

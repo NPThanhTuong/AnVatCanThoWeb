@@ -1,3 +1,14 @@
+:root {
+    --primary-color: #fea116;
+    --primary-color-blur: rgba(254, 161, 22, 0.05);
+    --gray-color: #ccc;
+    --dark-gray-color: #808080;
+    --light-gray-color: #eee;
+    --web-bg-color: #f9fafb;
+}
+
+
+
 html {
     font-size: 14px;
     position: relative;
@@ -5,28 +16,28 @@ html {
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 body {
-  /*margin-bottom: 60px;*/
-  min-height: 100vh;
-  margin: 0;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
+    /*margin-bottom: 60px;*/
+    min-height: 100vh;
+    margin: 0;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
 }
 
-.header{
+.header {
     min-height: 50px;
 }
 
-.footer1{
+.footer1 {
     min-height: 50px;
 }
 
-.btn__company{
+.btn__company {
     padding-left: 0;
 }
 
@@ -36,3 +47,4 @@ body {
     background-repeat: no-repeat !important;
     background-size: cover !important;
 }
+

@@ -116,8 +116,10 @@ namespace AnVatCanTho.DataAccess.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Avatar")
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)")
+                        .HasDefaultValue("no-avatar.jpg")
                         .HasColumnName("Avatar");
 
                     b.Property<string>("City")
@@ -180,9 +182,9 @@ namespace AnVatCanTho.DataAccess.Migrations
                             Id = 1,
                             City = "NA",
                             DisplayName = "NA",
-                            Dob = new DateTime(2024, 4, 3, 19, 55, 39, 271, DateTimeKind.Local).AddTicks(2567),
+                            Dob = new DateTime(2024, 4, 19, 9, 55, 56, 41, DateTimeKind.Local).AddTicks(3881),
                             Email = "admin@site.com",
-                            Password = "$2a$11$5TW40BYwYyBh1WFv157uXu8UsimlUlpzeCcLuT5UDtz50lLtBi8jW",
+                            Password = "$2a$11$1piWTecWlRdRoyqDV.9s6.9CBLz0.BhHhTZM32NpzoUAa6KgvUWeK",
                             RoleId = 1,
                             Tel = "NA",
                             Username = "NA"
@@ -237,12 +239,20 @@ namespace AnVatCanTho.DataAccess.Migrations
                         .HasColumnType("nvarchar(1024)")
                         .HasColumnName("Content");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedAt")
+                        .HasDefaultValueSql("getdate()");
+
                     b.Property<int>("CustomerId")
                         .HasColumnType("int")
                         .HasColumnName("Customer_Id");
 
                     b.Property<int?>("LikeQuantity")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
+                        .HasDefaultValue(0)
                         .HasColumnName("LikeQuantity");
 
                     b.Property<int>("ProductId")
@@ -271,6 +281,7 @@ namespace AnVatCanTho.DataAccess.Migrations
                         {
                             Id = 1,
                             Content = "NA",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CustomerId = 1,
                             ProductId = 1,
                             SnackBarId = 1
@@ -279,6 +290,7 @@ namespace AnVatCanTho.DataAccess.Migrations
                         {
                             Id = 2,
                             Content = "NA",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CustomerId = 2,
                             ProductId = 2,
                             SnackBarId = 2
@@ -295,8 +307,10 @@ namespace AnVatCanTho.DataAccess.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Avatar")
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)")
+                        .HasDefaultValue("no-avatar.jpg")
                         .HasColumnName("Avatar");
 
                     b.Property<string>("DisplayName")
@@ -347,9 +361,9 @@ namespace AnVatCanTho.DataAccess.Migrations
                         {
                             Id = 1,
                             DisplayName = "NVA",
-                            Dob = new DateTime(2024, 4, 3, 19, 55, 39, 128, DateTimeKind.Local).AddTicks(5312),
+                            Dob = new DateTime(2024, 4, 19, 9, 55, 55, 886, DateTimeKind.Local).AddTicks(6842),
                             Email = "nva@gmail.com",
-                            Password = "$2a$11$JPOHzRVNtb1SHnCCje9q9.cJF0iC4Dhp3LkVslth7Ndzv9nChoPli",
+                            Password = "$2a$11$mZ7lTjj1rKXLiylWysvY/e0nXLvQdqMa6RUlgo7YE/U7sdF5hY10.",
                             Tel = "0123456789",
                             Username = "Nguyễn Văn A"
                         },
@@ -357,9 +371,9 @@ namespace AnVatCanTho.DataAccess.Migrations
                         {
                             Id = 2,
                             DisplayName = "NVB",
-                            Dob = new DateTime(2024, 4, 3, 19, 55, 39, 271, DateTimeKind.Local).AddTicks(2135),
+                            Dob = new DateTime(2024, 4, 19, 9, 55, 56, 41, DateTimeKind.Local).AddTicks(3199),
                             Email = "nvb@gmail.com",
-                            Password = "$2a$11$32PpsqyoZavoO1ziHjQeGePy2GObWuyxPkjwpkaROe12b/yg7G.42",
+                            Password = "$2a$11$LiQdX3yep8I7tCXDEsauoukYr8QjF5vFP9YgePrjdGlFYpARuVs1.",
                             Tel = "0223456789",
                             Username = "Nguyễn Văn B"
                         });
@@ -693,7 +707,9 @@ namespace AnVatCanTho.DataAccess.Migrations
                         .HasColumnName("Customer_Id");
 
                     b.Property<double>("Star")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("float")
+                        .HasDefaultValue(0.0)
                         .HasColumnName("Star");
 
                     b.HasKey("SnackBarId", "ProductId", "CustomerId");
@@ -768,8 +784,10 @@ namespace AnVatCanTho.DataAccess.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Avatar")
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)")
+                        .HasDefaultValue("no-avatar.jpg")
                         .HasColumnName("Avatar");
 
                     b.Property<string>("CoverImage")
@@ -832,9 +850,9 @@ namespace AnVatCanTho.DataAccess.Migrations
                             Id = 1,
                             Description = "Description",
                             DisplayName = "snackbar1",
-                            Dob = new DateTime(2024, 4, 3, 19, 55, 39, 586, DateTimeKind.Local).AddTicks(215),
+                            Dob = new DateTime(2024, 4, 19, 9, 55, 56, 344, DateTimeKind.Local).AddTicks(780),
                             Email = "snackbar1@site.com",
-                            Password = "$2a$11$v4fl.EFctO0bciAxkDeFIOOCOAYodqb6YzYthDg6/SGIUa34GFGQi",
+                            Password = "$2a$11$WlXFQI6XzOhNAeN2bs3i6uc6aB8CsC4C8VI3c0sR/Jc/SGVEf0FBW",
                             Tel = "NA",
                             Username = "snackbar1"
                         },
@@ -843,9 +861,9 @@ namespace AnVatCanTho.DataAccess.Migrations
                             Id = 2,
                             Description = "Description",
                             DisplayName = "snackbar2",
-                            Dob = new DateTime(2024, 4, 3, 19, 55, 39, 726, DateTimeKind.Local).AddTicks(846),
+                            Dob = new DateTime(2024, 4, 19, 9, 55, 56, 491, DateTimeKind.Local).AddTicks(3310),
                             Email = "snackbar2@site.com",
-                            Password = "$2a$11$iEaqDWDD3pfc6aVF.HbgRexoRI/kW5UQ12C3YotrLUMz6OE6NOKfq",
+                            Password = "$2a$11$EB42Qhd2fPkUTUY/jpDJ8OnDoI5pa5eZ3JXr38.wpViIwCJifLDYu",
                             Tel = "NA",
                             Username = "snackbar2"
                         });

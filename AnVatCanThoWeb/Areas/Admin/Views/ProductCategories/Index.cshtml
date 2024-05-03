@@ -1,0 +1,55 @@
+<h1 class="mt-4">Danh mục sản phẩm</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">
+        <a asp-action="Index" asp-controller="Home" asp-area="Admin">Trang chủ</a>
+    </li>
+    <li class="breadcrumb-item active">Danh mục sản phẩm</li>
+</ol>
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="mb-2" style="max-width: 250px">
+            <label for="product-types" class="form-label">
+                Kiểu sản phẩm
+            </label>
+            <select id="product-types" class="form-select" asp-items="@ViewData["ProductTypes"] as IEnumerable<SelectListItem>">
+                <option value="-1">Chọn kiểu sản phẩm</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="card mb-4">
+    <div class="card-header">
+        <a class="btn btn-outline-primary" asp-action="Create">
+            <i class="fa-solid fa-plus"></i>
+            Thêm mới
+        </a>
+    </div>
+    <div class="card-body">
+        <table id="my-datatable" class="display">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Tên</th>
+                <th>Mô tả</th>
+                <th></th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css" />
+}
+
+@section Scripts {
+    <script>
+        let errorMessage = '';
+        @if (TempData["ErrorMessage"] is not null)
+        {
+            @Html.Raw($"errorMessage = '{TempData["ErrorMessage"]!.ToString()}'")
+        }
+    </script>
+    <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+    <script src="~/console/admin/product-categories/scripts.js"></script>
+}
