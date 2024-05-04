@@ -21,7 +21,7 @@ namespace AnVatCanThoWeb.Controllers
 
 
         [HttpPost]
-        public ActionResult AddAddress(Address address)
+        public IActionResult AddAddress(Address address)
         {
             bool flag = false;
             // Tạo quận huyện mới

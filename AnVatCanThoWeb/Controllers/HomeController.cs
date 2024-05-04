@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Security.Claims;
+using System.Security.Cryptography.Xml;
 
 namespace AnVatCanThoWeb.Controllers
 {
@@ -179,6 +180,47 @@ namespace AnVatCanThoWeb.Controllers
             TempData["Success"] = "Cập nhật hồ sơ thành công";
 
             return RedirectToAction("EditProfile");
+        }
+
+        public IActionResult Order()
+        {
+            string userId = User.Claims.Where(c => c.Type == ClaimTypes.Sid).Select(c => c.Value).SingleOrDefault();
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest();
+            }
+
+            List<Order> orderList = _db.Orders.Include(o => o.OrderDetails)
+                    .ThenInclude(d => d.Product)
+                        .ThenInclude(p => p.ProductImages)
+                    .Include(o => o.OrderDetails)
+                        .ThenInclude(d => d.SnackBar)
+                    .Where(o => o.CustomerId == int.Parse(userId)).ToList();
+
+            return View(orderList);
+        }
+
+        [HttpPost]
+        public IActionResult Rating(Rating rating)
+        {
+            Rating foundRating = _db.Ratings.FirstOrDefault(r => r.ProductId == rating.ProductId &&
+                r.SnackBarId == rating.ProductId &&
+                r.CustomerId == rating.CustomerId
+            );
+
+            if (foundRating is not null) {
+                _db.Add(rating);
+                _db.SaveChanges();
+                TempData["Success"] = "Đánh giá sản phẩm thành công";
+                return RedirectToAction("Order");
+            }
+            else
+            {
+                TempData["Failed"] = "Bạn đã đánh giá sản phẩm này.";
+                return RedirectToAction("Order");
+            }
+
+            
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

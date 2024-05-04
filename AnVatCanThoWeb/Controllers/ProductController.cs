@@ -221,7 +221,7 @@ namespace AnVatCanThoWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Comment(Comment comment, string CustomerDisplayName, string CustomerAvatar)
+        public async Task<IActionResult> Comment(Comment comment, string CustomerDisplayName, string CustomerAvatar)
         {
             // Lấy giá trị từ appsettings.json
             var AppVar = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("AppSettings");
@@ -243,12 +243,12 @@ namespace AnVatCanThoWeb.Controllers
             return Json(new { success = true });
         }
 
-        public ActionResult Cart()
+        public IActionResult Cart()
         {
             return View();
         }
 
-        public ActionResult Order()
+        public IActionResult Order()
         {
             List<Product> cartList = new List<Product>();
 
@@ -270,7 +270,7 @@ namespace AnVatCanThoWeb.Controllers
         }
 
         [HttpPost]
-        public ActionResult Order(string customerAddress)
+        public IActionResult Order(string customerAddress)
         {
             Dictionary<int, List<Product>> orders = new Dictionary<int, List<Product>>();
             Dictionary<int, int> total = new Dictionary<int, int>();
@@ -458,7 +458,7 @@ namespace AnVatCanThoWeb.Controllers
         }
 
         [HttpPost]
-        public ActionResult DeleteFromCart(int id)
+        public IActionResult DeleteFromCart(int id)
         {
             List<Product> cartList = JsonConvert.DeserializeObject<List<Product>>(
                     HttpContext.Session.GetString("ShoppingCart")

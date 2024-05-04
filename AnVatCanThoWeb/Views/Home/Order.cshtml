@@ -1,0 +1,182 @@
+﻿@using AnVatCanTho.Models
+@using System.Security.Claims
+@{
+    ViewData["Title"] = "Thông tin đơn hàng";
+
+    string userId = User.Claims.Where(c => c.Type == ClaimTypes.Sid).Select(c => c.Value).SingleOrDefault();
+}
+
+@model List<Order>
+
+<div style="margin-top: -2px;" class="container-xxl bg-white p-0">
+    <!-- Navbar & Hero Start -->
+    <div class="container-xxl position-relative p-0">
+        <div class="container-xxl py-5 bg-dark hero-header mb-5">
+            <div class="container text-center my-5 pt-5 pb-4">
+                <h1 class="display-3 text-white mb-3 animated slideInDown font-roboto">Đơn hàng đã đặt</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center text-uppercase">
+                        <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Home">Trang chủ</a></li>
+                        <li class="breadcrumb-item text-white active" aria-current="page">Đơn hàng</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Navbar & Hero End -->
+    <div class="container-xxl py-5">
+        <div class="container">
+
+
+            @foreach (Order order in Model)
+            {
+                <div class="card shadow-sm mb-4 p-4">
+                    <div class="d-flex justify-content-between">
+                        <p>
+                            Địa chỉ: @order.Address
+                        </p>
+                        <p>Mã đơn hàng: #@order.Id</p>
+                    </div>
+                    <table class="table table-striped table-hover mb-4">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Sản phẩm</th>
+                                <th>Số lượng</th>
+                                <th>Đơn giá</th>
+                                <th>Thành tiền</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int i = 1;
+                            }
+                            @foreach (var detail in order.OrderDetails)
+                            {
+                                var productImg = detail.Product.ProductImages.First();
+                                var imgPath = productImg is null ? "no-image.jpg" : productImg.PathName;
+                                <tr>
+                                    <td>@i</td>
+                                    <td>
+                                        <div class="d-flex flex-row align-items-center">
+                                            <div>
+                                                <img src="@Url.Content($"~/images/Products/{imgPath}")"
+                                                     class="img-fluid rounded-3" alt="Shopping item" style="width: 65px;">
+                                            </div>
+                                            <div class="ms-3">
+                                                <h5 class="font-roboto">@detail.Product.Name</h5>
+                                                <p class="small mb-0">@detail.SnackBar.DisplayName</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>@detail.Quantity</td>
+                                    <td>@((detail.Price * 1000).ToString("#,###")) VND</td>
+                                    <td>@((detail.Price * detail.Quantity * 1000).ToString("#,###")) VND</td>
+                                    <td>
+                                        @if (order.Status)
+                                        {
+                                            <button type="button"
+                                                    class="btn btn-success text-white"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#ratingModal"
+                                                    data-bs-whatever="@(detail.Product.Id + "_" + detail.Product.SnackBarId + "_" + userId)">
+                                                Đánh giá
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="button"
+                                                    class="btn btn-secondary"
+                                                    disabled>
+                                                Đang xử lý
+                                            </button>
+                                        }
+
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="5" class="text-start fw-bold text-dark">
+                                    Tổng tiền: @((order.Total * 1000).ToString("#,###")) VND
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            }
+            <!-- Modal -->
+            <div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title font-roboto" id="exampleModalLabel">Đánh giá sản phẩm</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form asp-action="Rating" asp-controller="Home" method="post" id="ratingFrm">
+                                <input type="text" name="ProductId" hidden />
+                                <input type="text" name="SnackBarId" hidden />
+                                <input type="text" name="CustomerId" hidden />
+                                <div class="d-flex justify-content-between">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Star" value="1">
+                                        <label class="form-check-label">
+                                            1
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Star" value="2">
+                                        <label class="form-check-label">
+                                            2
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Star" value="3">
+                                        <label class="form-check-label">
+                                            3
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Star" value="4">
+                                        <label class="form-check-label">
+                                            4
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Star" value="5" checked>
+                                        <label class="form-check-label">
+                                            5
+                                        </label>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                            <button type="submit" class="btn btn-primary text-white" form="ratingFrm">Đánh giá</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+{
+    <script>
+        @if (TempData["Success"] is not null)
+        {
+            @Html.Raw($"toastr.success('{TempData["Success"]}')")
+        }
+        @if (TempData["Failed"] is not null)
+        {
+            @Html.Raw($"toastr.error('{TempData["Failed"]}')")
+        }
+    </script>
+    <script src="~/js/product-rating.js"></script>
+}

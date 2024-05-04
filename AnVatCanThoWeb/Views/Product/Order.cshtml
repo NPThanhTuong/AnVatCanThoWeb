@@ -180,12 +180,11 @@
     <script>
         @if (TempData["Success"] is not null)
         {
-            @Html.Raw($"toastr.success('{TempData["Success"]}')");
+            @Html.Raw($"toastr.success('{TempData["Success"]}')")
         }
         @if (TempData["Failed"] is not null)
         {
             @Html.Raw($"toastr.error('{TempData["Failed"]}')")
-            ;
         }
     </script>
     <script src="~/js/order.js"></script>

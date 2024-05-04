@@ -124,7 +124,7 @@ namespace AnVatCanThoWeb.Controllers
             return View(vm);
         }
         [HttpGet]
-        public async Task<ActionResult> Logout()
+        public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(ApplicationAuthenticationScheme.UserScheme);
             return RedirectToAction(actionName: "Index", controllerName: "Home");
