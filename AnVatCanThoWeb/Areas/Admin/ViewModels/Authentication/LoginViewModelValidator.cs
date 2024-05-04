@@ -8,11 +8,12 @@ public class LoginViewModelValidator : AbstractValidator<LoginViewModel>
     {
         RuleFor(x => x.Email)
             .NotEmpty()
-            .WithMessage(errorMessage: "Email is required")
+            .WithMessage(errorMessage: "Vui lòng nhập email")
             .EmailAddress()
-            .WithMessage(errorMessage: "Must be an email");
+            .WithMessage(errorMessage: "Vui lòng nhập email");
         
         RuleFor(x => x.Password)
-            .NotEmpty();
+            .NotEmpty()
+            .WithMessage(errorMessage: "Vui lòng nhập mật khẩu");
     }
 }

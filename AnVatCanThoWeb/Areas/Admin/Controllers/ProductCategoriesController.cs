@@ -2,6 +2,8 @@
 using AnVatCanTho.Models;
 using AnVatCanThoWeb.Areas.Admin.Common;
 using AnVatCanThoWeb.Areas.Admin.ViewModels.Category;
+using AnVatCanThoWeb.Common.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 namespace AnVatCanThoWeb.Areas.Admin.Controllers;
 
 [Area(AdminAreaName.Value)]
+[Authorize(AuthenticationSchemes = ApplicationAuthenticationScheme.AdminScheme)]
 public class ProductCategoriesController : Controller
 {
     private readonly ApplicationDbContext _dbContext;

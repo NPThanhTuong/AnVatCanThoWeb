@@ -2,12 +2,15 @@ using AnVatCanTho.DataAccess.Data;
 using AnVatCanThoWeb.Areas.Admin.Common;
 using AnVatCanThoWeb.Areas.Admin.ViewModels.Common;
 using AnVatCanThoWeb.Areas.Admin.ViewModels.Customers;
+using AnVatCanThoWeb.Common.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AnVatCanThoWeb.Areas.Admin.Controllers;
 
 [Area(AdminAreaName.Value)]
+[Authorize(AuthenticationSchemes = ApplicationAuthenticationScheme.AdminScheme)]
 public class CustomersController : Controller
 {
     private readonly ApplicationDbContext _dbContext;

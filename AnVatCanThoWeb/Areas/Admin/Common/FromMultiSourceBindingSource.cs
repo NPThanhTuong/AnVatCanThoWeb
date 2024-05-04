@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace AnVatCanThoWeb.Areas.Admin.Controllers;
+namespace AnVatCanThoWeb.Areas.Admin.Common;
 
 public sealed class FromMultiSourceBindingSource : BindingSource
 {
