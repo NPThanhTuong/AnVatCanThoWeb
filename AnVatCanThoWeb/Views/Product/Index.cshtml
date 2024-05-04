@@ -84,17 +84,20 @@
                     {
                         @foreach (var item in Model)
                         {
+                            var productImg = item.Product.ProductImages.FirstOrDefault(p => p.ProductId == item.Product.Id);
+                            var imgPath = productImg is null ? "no-image.jpg" : productImg.PathName;
+
                             <div class="col-6 col-lg-4 mb-4">
                                 <div class="card shadow rounded-3">
-                                    <img src="https://picsum.photos/200/300" class="card-img-top product-image-height rounded-top" alt="Hình ảnh sản phẩm">
+                                    <img src="@Url.Content($"~/images/Products/{imgPath}")" class="card-img-top product-image-height rounded-top" alt="Hình ảnh sản phẩm">
 
                                     <div class="card-body border-top border-gray-300">
-                                        <h3 class="fs-5 fw-bold">@item.Product.Name</h3>
+                                        <h3 class="fs-5 fw-bold font-roboto">@item.Product.Name</h3>
                                         <a asp-action="Details" asp-controller="Shop" asp-route-id="@item.Product.SnackBarId" class="h6 fw-bold">@item.Product.SnackBar.DisplayName</a>
-                                        <h5 class="h6 fw-semibold text-gray mt-2 product-truncate-text">@item.Product.Description</h5>
+                                        <h5 class="fw-semibold fs-6 text-gray mt-2 product-truncate-text font-roboto">@item.Product.Description</h5>
                                         <div>
                                             <span class="h6 mb-0 text-decoration-line-through me-2 text-gray">
-                                                @((item.Product.UnitPrice * 1000).ToString("#,###")) đ
+                                                @(((item.Product.UnitPrice + new Random().Next(50, 99)) * 1000).ToString("#,###")) đ
                                             </span>
                                             @* Cần xử lý giá giảm ở đây, hiện tại chỉ hiển thị tạm *@
                                             <span class="h5 mb-0 text-danger">@((item.Product.UnitPrice * 1000).ToString("#,###")) đ</span>

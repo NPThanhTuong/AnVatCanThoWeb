@@ -14,6 +14,10 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/AnVatCanThoWeb.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    @* Roboto font *@
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
 
     <!-- Libraries Stylesheet -->
     <link href="~/lib/animate/animate.min.css" rel="stylesheet">
@@ -35,8 +39,8 @@
     }
     <header class="header">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 px-lg-5 py-3 py-lg-0">
-            <a href="" class="navbar-brand p-0">
-                <h1 class="m-0" style="color: #FEA116;"><i class="fa fa-utensils me-3"></i>Restoran</h1>
+            <a asp-controller="Home" asp-action="Index" class="navbar-brand p-0">
+                <h1 class="m-0" style="color: #FEA116;"><i class="fa fa-utensils me-3"></i>AnVatCanTho</h1>
                 <!-- <img src="img/logo.png" alt="Logo"> -->
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
@@ -47,14 +51,7 @@
 
                     <a asp-controller="Home" asp-action="Index" class="nav-item nav-link active">Trang chủ</a>
                     <a asp-controller="Product" asp-action="Index" class="nav-item nav-link active">Sản phẩm</a>
-                    @* <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                    <div class="dropdown-menu m-0">
-                    <a href="booking.html" class="dropdown-item">Booking</a>
-                    <a href="team.html" class="dropdown-item">Our Team</a>
-                    <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                    </div>
-                    </div> *@
+                    
                     @{
                         int cartcount = 0;
                         List<Product> cartList = new List<Product>();
@@ -94,7 +91,7 @@
                         <span class="ms-2 text-white">@userDisplayName</span>
                         <ul class="dropdown-menu" aria-labelledby="dropdownUserMenu">
                             <li><a class="dropdown-item" href="#">Hồ sơ</a></li>
-                            <li><a class="dropdown-item" href="#">Đăng xuất</a></li>
+                            <li><a class="dropdown-item" asp-controller="Auth" asp-action="Logout">Đăng xuất</a></li>
                         </ul>
                     </div>
                 }
@@ -112,19 +109,18 @@
         <div class="container-fluid bg-dark text-light wow fadeIn" style="padding-bottom: 25px;" data-wow-delay="0.1s">
             <div class="container py-5">
                 <div class="row g-5">
-                    <div class="col-lg-3 col-md-6">
-                        <h4 class="section-title ff-secondary text-start fw-normal mb-4" style="color: #FEA116;">Company</h4>
-                        <a class="btn btn__company" href="" style="color: #FFF;">About Us</a><br />
-                        <a class="btn btn__company" href="" style="color: #FFF;">Contact Us</a><br />
-                        <a class="btn btn__company" href="" style="color: #FFF;">Reservation</a><br />
-                        <a class="btn btn__company" href="" style="color: #FFF;">Privacy Policy</a><br />
-                        <a class="btn btn__company" href="" style="color: #FFF;">Terms & Condition</a><br />
+                    <div class="col-lg-4 col-md-6">
+                        <h4 class="section-title ff-secondary text-start fw-normal mb-4" style="color: #FEA116;">Công ty</h4>
+                        <a class="btn btn__company" href="" style="color: #FFF;">Về chúng tôi</a><br />
+                        <a class="btn btn__company" href="" style="color: #FFF;">Liên hệ với chúng tôi</a><br />
+                        <a class="btn btn__company" href="" style="color: #FFF;">Đặt chỗ</a><br />
+                        <a class="btn btn__company" href="" style="color: #FFF;">Điều khoản & chính sách</a><br />
                     </div>
-                    <div class="col-lg-3 col-md-6">
-                        <h4 class="section-title ff-secondary text-start fw-normal mb-4" style="color: #FEA116;">Contact</h4>
-                        <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>123 Street, New York, USA</p>
+                    <div class="col-lg-4 col-md-6">
+                        <h4 class="section-title ff-secondary text-start fw-normal mb-4" style="color: #FEA116;">Liên hệ</h4>
+                        <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>Đường 3/2, Xuân Khánh, Ninh Kiều, Cần Thơ</p>
                         <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+012 345 67890</p>
-                        <p class="mb-2"><i class="fa fa-envelope me-3"></i>info@example.com</p>
+                        <p class="mb-2"><i class="fa fa-envelope me-3"></i>npttuong@gmail.com</p>
                         <div class="d-flex pt-2">
                             <a class="btn btn-outline-light btn-social" href="" style="color: white;"><i class="fab fa-twitter"></i></a>
                             <a class="btn btn-outline-light btn-social" href="" style="color: white;"><i class="fab fa-facebook-f"></i></a>
@@ -132,19 +128,13 @@
                             <a class="btn btn-outline-light btn-social" href="" style="color: white;"><i class="fab fa-linkedin-in"></i></a>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-6">
-                        <h4 class="section-title ff-secondary text-start fw-normal mb-4" style="color: #FEA116;">Opening</h4>
-                        <h5 class="text-light fw-normal">Monday - Saturday</h5>
-                        <p>09AM - 09PM</p>
-                        <h5 class="text-light fw-normal">Sunday</h5>
-                        <p>10AM - 08PM</p>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <h4 class="section-title ff-secondary text-start fw-normal mb-4" style="color: #FEA116;">Newsletter</h4>
-                        <p>Dive into mouthwatering recipes, discover hidden gems in the food scene, and stay updated on the latest trends.</p>
+                    
+                    <div class="col-lg-4 col-md-6">
+                        <h4 class="section-title ff-secondary text-start fw-normal mb-4" style="color: #FEA116;">Bản tin</h4>
+                        <p>Đi sâu vào các công thức nấu ăn hấp dẫn, khám phá những viên ngọc quý ẩn giấu trong nền ẩm thực và luôn cập nhật những xu hướng mới nhất.</p>
                         <div class="position-relative mx-auto" style="max-width: 400px;">
-                            <input class="form-control w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
-                            <button type="button" class="btn py-2 position-absolute top-0 end-0 mt-2 me-2" style="background: #FEA116; color: #FFF;">SignUp</button>
+                            <input class="form-control w-100 py-3 ps-4 pe-5" type="text" placeholder="Email">
+                            <button type="button" class="btn py-2 position-absolute top-0 end-0 mt-2 me-2" style="background: #FEA116; color: #FFF;">Đăng ký</button>
                         </div>
                     </div>
                 </div>

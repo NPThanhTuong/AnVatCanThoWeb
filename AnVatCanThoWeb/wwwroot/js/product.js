@@ -32,19 +32,45 @@ function SpecificPage(pageNum) {
 }
 
 
-function AddToCart(productId) {
+function AddToCart(productId, isDetailPage = false, returnUrl = "%2FProduct") {
+    let quantity = 1;
+    if (isDetailPage) {
+        quantity = $('input[name="quantity"]').val();
+    }
+
     $.ajax({
         type: 'POST',
         url: '/Product/AddToCart',
-        data: { id: productId },
+        data: { id: productId, quantity: parseInt(quantity) },
         success: function (data) {
             $("#cart-amount").text(data.itemAmount);
             toastr.success("Thêm sản phẩm vào giỏ hàng thành công");
         },
         error: function (res) {
             if (res.status === 401) {
-                window.location = "/Auth/Login?ReturnUrl=%2FProduct";
+                window.location = `/Auth/Login?ReturnUrl=${returnUrl}`;
             }
         }
     });
+}
+
+function HandleOrderProduct(productId, returnUrl) {
+    const quantity = $('input[name="quantity"]').val();
+
+    $.ajax({
+        type: 'POST',
+        url: '/Product/AddToCart',
+        data: { id: productId, quantity: parseInt(quantity) },
+        success: function (data) {
+            $("#cart-amount").text(data.itemAmount);
+            toastr.success("Thêm sản phẩm vào giỏ hàng thành công");
+            window.location = '/Product/Order';
+        },
+        error: function (res) {
+            if (res.status === 401) {
+                window.location = `/Auth/Login?ReturnUrl=${returnUrl}`;
+            }
+        }
+    });
+    
 }
