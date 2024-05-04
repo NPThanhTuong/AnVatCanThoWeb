@@ -1,4 +1,5 @@
 using AnVatCanTho.DataAccess.Data;
+using AnVatCanThoWeb.Areas.Admin.Common;
 using AnVatCanThoWeb.Common;
 using AnVatCanThoWeb.Common.Authentication;
 using DotnetGeminiSDK;
@@ -24,6 +25,8 @@ var builder = WebApplication.CreateBuilder(args);
         c.ApiKey = geminiSettings.ApiKey;
         c.TextBaseUrl = geminiSettings.TextBaseUrl;
     });
+
+    builder.Services.AddSingleton(typeof(GetAdminDatabaseSchemaService));
     
     builder.Services.AddAuthentication(o =>
         {

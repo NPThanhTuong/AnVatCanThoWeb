@@ -59,4 +59,11 @@ public class AuthController : Controller
 
         return RedirectToAction(actionName: "Index", controllerName: "Home");
     }
+
+    [HttpGet]
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync(ApplicationAuthenticationScheme.AdminScheme);
+        return RedirectToAction("Login");
+    }
 }

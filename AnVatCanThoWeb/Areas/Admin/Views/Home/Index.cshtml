@@ -1,2 +1,45 @@
+<h1 class="mt-4">Truy vấn thông minh</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item active">
+        Trang chủ
+    </li>
+</ol>
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="text-primary fw-semibold">Ví dụ</h5>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                Sản phẩm có giá rẻ nhất
+            </li>
 
-hello
+            <li class="list-group-item">
+                quầy bán thức ăn bán sản phẩm rẻ nhất, hiển thị kèm tên quầy, tên sản phẩm rẻ nhất và giá của nó
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="card mb-4 h-100">
+    <div class="card-body overflow-auto" style="max-height: 80vh; min-height: 80vh;" id="result-box-parent">
+        <div class="d-flex flex-column w-100 h-100" id="result-box" style="overflow-y: auto">
+        </div>
+    </div>
+
+    <div class="card-footer">
+        <form onsubmit="handleSubmit(event)" class="w-100">
+            <div class="input-group">
+                <input type="search" class="form-control rounded" placeholder="Món ăn có giá rẻ nhất" id="search-input"/>
+                <button type="submit" class="btn btn-primary" data-mdb-ripple-init id="search-button">Truy vấn</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/console/admin/home/scripts.js"></script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css"/>
+}
