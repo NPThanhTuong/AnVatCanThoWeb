@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using AnVatCanThoWeb.Common.Authentication;
 using Newtonsoft.Json;
 using System.Security.Claims;
+using System.Net;
 
 namespace AnVatCanThoWeb.Controllers
 {
@@ -273,17 +274,25 @@ namespace AnVatCanThoWeb.Controllers
         public ActionResult Order(string customerAddress)
         {
             Dictionary<int, List<Product>> orders = new Dictionary<int, List<Product>>();
+            Dictionary<int, int> total = new Dictionary<int, int>();
 
-            if(customerAddress == "0" || string.IsNullOrEmpty(customerAddress))
+            // Lỗi khi đặt hàng nhưng không chọn địa chỉ
+            if (customerAddress == "0" || string.IsNullOrEmpty(customerAddress))
             {
-                TempData["ThongBaoDiaChi"] = "Vui lòng chọn địa chỉ để tiếp tục đặt hàng.";
+                TempData["Failed"] = "Vui lòng chọn địa chỉ để tiếp tục đặt hàng.";
                 return RedirectToAction("Order");
+            }
+            // Lấy ra địa chỉ người dùng chọn
+            Address foundAddress = _db.Addresses.FirstOrDefault(a => a.Id == int.Parse(customerAddress));
+            if (foundAddress is null)
+            {
+                return NotFound();
             }
 
             List<Product> cartList = new List<Product>();
 
+            // Lấy User đặt hàng
             string userId = User.Claims.Where(c => c.Type == ClaimTypes.Sid).Select(c => c.Value).SingleOrDefault();
-            
             Customer customer = _db.Customers.Include(c => c.Addresses).FirstOrDefault(c => c.Id == int.Parse(userId));
             if (HttpContext.Session.GetString("ShoppingCart") != null)
             {
@@ -292,26 +301,69 @@ namespace AnVatCanThoWeb.Controllers
                     );
             }
 
-            if(cartList.Count == 0)
+            // Lỗi khi không có sản phẩm trong giỏ hàng
+            if (cartList.Count == 0)
             {
-                TempData["ThongBaoSanPham"] = "Vui lòng thêm sản phẩm vào giỏ hàng.";
+                TempData["Failed"] = "Vui lòng thêm sản phẩm vào giỏ hàng.";
                 return RedirectToAction("Order");
             }
 
             // Phân loại sản phẩm theo snackbarId
             foreach (Product item in cartList)
             {
+                int quantity = (int)HttpContext.Session.GetInt32($"Quantity_{item.Id}");
+
                 if (orders.ContainsKey(item.SnackBarId))
                 {
                     orders[item.SnackBarId].Add(item);
+                    total.Add(item.SnackBarId, total[item.SnackBarId] + (quantity * item.UnitPrice));
                 }
                 else
                 {
                     orders.Add(item.SnackBarId, new List<Product> { item });
+                    total.Add(item.SnackBarId, item.UnitPrice * quantity);
                 }
             }
 
-            return RedirectToAction("Index", "Product");
+            foreach (KeyValuePair<int, List<Product>> kvp in orders)
+            {
+
+                // Tạo order cho mỗi snackbar
+                Order newOrder = new Order()
+                {
+                    CustomerId = customer.Id,
+                    Total = total[kvp.Key],
+                    Status = false,
+                    Address = $"{foundAddress.NoAndStreet}, {foundAddress.WardName}, {foundAddress.DistrictName}"
+                };
+                _db.Add(newOrder);
+                _db.SaveChanges();
+
+                // Thêm sản phẩm vào order vừa tạo
+                foreach (Product product in kvp.Value)
+                {
+                    _db.OrderDetails.Add(new OrderDetail()
+                    {
+                        ProductId = product.Id,
+                        SnackBarId = product.SnackBarId,
+                        OrderId = newOrder.Id,
+                        Quantity = (int)HttpContext.Session.GetInt32($"Quantity_{product.Id}"),
+                        Price = product.UnitPrice
+                    });
+
+                    // Xóa số lượng trong session  
+                    HttpContext.Session.Remove($"Quantity_{product.Id}");
+                }
+                _db.SaveChanges();
+
+            }
+
+            // Xóa tất cả sản phẩm trong giỏ hàng
+            HttpContext.Session.Remove("ShoppingCart");
+
+            TempData["Success"] = "Bạn đã đặt hàng thành công. Đang chờ quầy ăn xử lý.";
+
+            return RedirectToAction("Order");
         }
 
         #region API
@@ -360,7 +412,7 @@ namespace AnVatCanThoWeb.Controllers
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 }));
-                
+
                 HttpContext.Session.SetInt32($"Quantity_{product.Id}", quantity);
             }
             else
@@ -401,7 +453,7 @@ namespace AnVatCanThoWeb.Controllers
                 );
 
             int cartCount = ls.Count;
-            
+
 
             return Json(new { ItemAmount = cartCount });
         }
@@ -412,9 +464,9 @@ namespace AnVatCanThoWeb.Controllers
             List<Product> cartList = JsonConvert.DeserializeObject<List<Product>>(
                     HttpContext.Session.GetString("ShoppingCart")
                 );
-            foreach(Product item in cartList)
+            foreach (Product item in cartList)
             {
-                if(item.Id == id) 
+                if (item.Id == id)
                 {
                     cartList.Remove(item);
                     HttpContext.Session.SetString("ShoppingCart", JsonConvert.SerializeObject(cartList, Formatting.Indented, new JsonSerializerSettings
@@ -432,8 +484,8 @@ namespace AnVatCanThoWeb.Controllers
             return Json(new { ItemAmount = cartCount });
         }
 
-        
-        
+
+
 
         [HttpGet("/api/districts")]
         public async Task<IActionResult> GetAllDistricts()
