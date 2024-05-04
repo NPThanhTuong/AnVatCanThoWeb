@@ -25,7 +25,7 @@
     <!-- Customized Bootstrap Stylesheet -->
     <link href="~/css/bootstrap.min.css" rel="stylesheet">
     <!-- ToastrJS-->
-    <link href="~/lib//toastr/toastr.min.css" rel="stylesheet" />
+    <link href="~/lib/toastr/toastr.min.css" rel="stylesheet" />
     @RenderSection("Styles", required: false)
 
 
@@ -90,8 +90,9 @@
                              aria-expanded="false" />
                         <span class="ms-2 text-white">@userDisplayName</span>
                         <ul class="dropdown-menu" aria-labelledby="dropdownUserMenu">
-                            <li><a class="dropdown-item" href="#">Hồ sơ</a></li>
-                            <li><a class="dropdown-item" asp-controller="Auth" asp-action="Logout">Đăng xuất</a></li>
+                            <li><a class="dropdown-item" asp-controller="Home" asp-action="Profile">Hồ sơ</a></li>
+                            <li><a class="dropdown-item" asp-controller="Home" asp-action="Order">Đơn hàng</a></li>
+                            <li><a class="dropdown-item text-danger" asp-controller="Auth" asp-action="Logout">Đăng xuất</a></li>
                         </ul>
                     </div>
                 }
@@ -100,10 +101,6 @@
     </header>
 
     @RenderBody()
-    @* <div class="container">
-    <main role="main" class="pb-3">
-    </main>
-    </div> *@
 
     <footer class="footer1">
         <div class="container-fluid bg-dark text-light wow fadeIn" style="padding-bottom: 25px;" data-wow-delay="0.1s">

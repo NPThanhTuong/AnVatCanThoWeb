@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Authorization;
 using AnVatCanThoWeb.Common.Authentication;
 using Newtonsoft.Json;
 using System.Security.Claims;
-using System.Net;
 
 namespace AnVatCanThoWeb.Controllers
 {
@@ -222,7 +221,7 @@ namespace AnVatCanThoWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Comment(Comment comment, string CustomerDisplayName, string CustomerAvatar)
+        public async Task<IActionResult> Comment(Comment comment, string CustomerDisplayName, string CustomerAvatar)
         {
             // Lấy giá trị từ appsettings.json
             var AppVar = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("AppSettings");
@@ -244,12 +243,12 @@ namespace AnVatCanThoWeb.Controllers
             return Json(new { success = true });
         }
 
-        public ActionResult Cart()
+        public IActionResult Cart()
         {
             return View();
         }
 
-        public ActionResult Order()
+        public IActionResult Order()
         {
             List<Product> cartList = new List<Product>();
 
@@ -271,7 +270,7 @@ namespace AnVatCanThoWeb.Controllers
         }
 
         [HttpPost]
-        public ActionResult Order(string customerAddress)
+        public IActionResult Order(string customerAddress)
         {
             Dictionary<int, List<Product>> orders = new Dictionary<int, List<Product>>();
             Dictionary<int, int> total = new Dictionary<int, int>();
@@ -316,7 +315,7 @@ namespace AnVatCanThoWeb.Controllers
                 if (orders.ContainsKey(item.SnackBarId))
                 {
                     orders[item.SnackBarId].Add(item);
-                    total.Add(item.SnackBarId, total[item.SnackBarId] + (quantity * item.UnitPrice));
+                    total[item.SnackBarId] = total[item.SnackBarId] + (quantity * item.UnitPrice);
                 }
                 else
                 {
@@ -459,7 +458,7 @@ namespace AnVatCanThoWeb.Controllers
         }
 
         [HttpPost]
-        public ActionResult DeleteFromCart(int id)
+        public IActionResult DeleteFromCart(int id)
         {
             List<Product> cartList = JsonConvert.DeserializeObject<List<Product>>(
                     HttpContext.Session.GetString("ShoppingCart")
@@ -483,32 +482,6 @@ namespace AnVatCanThoWeb.Controllers
 
             return Json(new { ItemAmount = cartCount });
         }
-
-
-
-
-        [HttpGet("/api/districts")]
-        public async Task<IActionResult> GetAllDistricts()
-        {
-            var districts = await _db.Districts.ToListAsync();
-            return Ok(districts);
-        }
-
-
-        [HttpGet("/api/wards")]
-        public async Task<IActionResult> GetAllWards(string? districtName)
-        {
-            var wardQueryable = _db.Wards.AsQueryable();
-            if (!string.IsNullOrEmpty(districtName))
-            {
-                wardQueryable = wardQueryable.Where(x => x.DistrictName.Equals(districtName));
-            }
-
-            var wards = await wardQueryable.ToListAsync();
-
-            return Ok(wards);
-        }
-
         #endregion
     }
 }

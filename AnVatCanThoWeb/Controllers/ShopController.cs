@@ -31,7 +31,7 @@ namespace AnVatCanThoWeb.Controllers
         //    return View();
         //}
 
-        public ActionResult Details(int id, int page)
+        public IActionResult Details(int id, int page)
         {
             List<ProductVM> productsVM = new List<ProductVM>();
             const int PER_PAGE = 8;
@@ -83,7 +83,5 @@ namespace AnVatCanThoWeb.Controllers
 
             return View(detailProductVM);
         }
-
-
     }
 }

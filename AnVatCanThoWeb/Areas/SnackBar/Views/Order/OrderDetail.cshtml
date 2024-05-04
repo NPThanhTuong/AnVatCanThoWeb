@@ -1,4 +1,21 @@
 ﻿@model List<AnVatCanTho.Models.OrderDetail>
+
+<div class="d-flex justify-content-between mt-4">
+    <h3 class="fw-bold">Chi tiết đơn hàng</h3>
+
+    <div id="buttonField">
+        @if (!ViewBag.OrderStatus)
+        {
+            <button class="btn btn-primary" onclick="handleProcessOrder(event, @Model.First().OrderId)">
+                Xử lý đơn hàng
+            </button>
+        }
+        else
+        {
+            <button class="btn btn-secondary" disabled>Xử lý đơn hàng</button>
+        }
+    </div>
+</div>
 <div class="mt-4">
     <table class="table">
         <tr>
@@ -27,9 +44,37 @@
                     @Html.DisplayFor(modelItem => item.Quantity)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Price)
+                    @((item.Price * 1000).ToString("#,###")) VND
                 </td>
+
             </tr>
         }
     </table>
 </div>
+
+@section Scripts {
+    <script>
+        function handleProcessOrder(event, orderId) {
+            $.ajax({
+                url: '/SnackBar/Order/Process',
+                method: 'POST',
+                data: { id: orderId },
+                success: function (data) {
+                    $("#buttonField").html('<button class="btn btn-secondary" disabled>Xử lý đơn hàng</button>');
+                    Swal.fire({
+                        title: "Xử lý đơn hàng",
+                        text: "Đơn hàng đã được xử lý thành công.",
+                        icon: "success"
+                    });
+                },
+                error: function (res) {
+                    Swal.fire({
+                        title: "Xử lý đơn hàng",
+                        text: "Có lỗi xảy ra khi xử lý đơn hàng.",
+                        icon: "error"
+                    });
+                }
+            });
+        }
+    </script>
+}

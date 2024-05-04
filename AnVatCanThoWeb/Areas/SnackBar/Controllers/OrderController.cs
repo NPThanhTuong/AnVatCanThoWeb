@@ -35,6 +35,29 @@ public class OrderController : Controller
     public async Task<IActionResult> OrderDetail(int Id)
     {
         var OrderDetail = await _db.OrderDetails.Include(od => od.Product).Where(od => od.OrderId == Id).ToListAsync();
+        Order order = _db.Orders.FirstOrDefault(o => o.Id == Id);
+
+        ViewBag.OrderStatus = order.Status; 
         return View(OrderDetail);
+    }
+
+    public async Task<IActionResult> Process(int id)
+    {
+        if(id == 0)
+        {
+            return NotFound();
+        }
+
+        Order foundOrder = _db.Orders.FirstOrDefault(o => o.Id == id);
+        if(foundOrder is null)
+        {
+            return NotFound();
+        }
+
+        foundOrder.Status = true;
+        _db.Update(foundOrder);
+        _db.SaveChanges();
+
+        return RedirectToAction("Index");
     }
 }

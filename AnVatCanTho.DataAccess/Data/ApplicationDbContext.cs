@@ -376,6 +376,8 @@ namespace AnVatCanTho.DataAccess.Data
                     .IsRequired(false)
                     .HasColumnName("Avatar");
                 entity.Property(e => e.CoverImage)
+                .HasDefaultValue("no-image.jpg")
+                    .IsRequired(false)
                     .HasMaxLength(256)
                     .HasColumnName("CoverImage");
                 entity.Property(e => e.Description)

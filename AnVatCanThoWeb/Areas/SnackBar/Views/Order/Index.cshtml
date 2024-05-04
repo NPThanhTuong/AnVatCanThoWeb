@@ -28,7 +28,7 @@
                     @Html.DisplayFor(modelItem => item.Customer.DisplayName)
             </td>
             <td>
-                    @Html.DisplayFor(modelItem => item.Total)
+                     @((item.Total * 1000).ToString("#,###")) VND
             </td>
             <td>
                     @if (item.Status == true)
