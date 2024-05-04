@@ -19,8 +19,8 @@ public class CreateProductViewModelValidator : AbstractValidator<CreateProductVi
             .WithMessage("Vui lòng nhập thành phần có trong sản phẩm");
 
         RuleFor(x => x.UnitPrice)
-            .GreaterThanOrEqualTo(1000)
-            .WithMessage("Giá sản phẩm phải lớn hơn bằng 1000 VNĐ");
+            .GreaterThanOrEqualTo(1)
+            .WithMessage("Giá sản phẩm phải lớn hơn bằng 1");
 
         RuleFor(x => x.Stock)
             .GreaterThanOrEqualTo(0)
