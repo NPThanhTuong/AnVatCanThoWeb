@@ -15,7 +15,7 @@
 
                             <div class="col-lg-9">
                                 <h5 class="mb-3">
-                                    <a asp-controller="Product" asp-action="Index" class="text-body">
+                                    <a asp-controller="Product" asp-action="Index" class="text-body font-roboto">
                                         <i class="fas fa-long-arrow-alt-left me-2"></i>Tiếp tục chọn món ăn
                                     </a>
                                 </h5>
@@ -42,7 +42,7 @@
                                 {
                                     foreach (Product item in cartList)
                                     {
-                                        var productImg = item.ProductImages.FirstOrDefault();
+                                        var productImg = item.ProductImages.FirstOrDefault(p => p.ProductId == item.Id);
                                         var imgPath = productImg is null ? "no-image.jpg" : productImg.PathName;
                                         int quantity = (int)HttpContextAccessor.HttpContext.Session.GetInt32($"Quantity_{item.Id}");
 
@@ -55,7 +55,7 @@
                                                                  class="img-fluid rounded-3" alt="Shopping item" style="width: 65px;">
                                                         </div>
                                                         <div class="ms-3">
-                                                            <h5>@item.Name</h5>
+                                                            <h5 class="font-roboto">@item.Name</h5>
                                                             <p class="small mb-0">@item.SnackBar.DisplayName</p>
                                                         </div>
                                                     </div>
@@ -109,8 +109,8 @@
                                             <p class="mb-2 totalPrice">@((total * 1000).ToString("#,###")) VND</p>
                                         </div>
 
-                                        <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-success btn-block btn-lg">
-                                            <span>Đặt hàng <i class="fas fa-long-arrow-alt-right ms-2"></i></span>
+                                        <button type="button" class="btn btn-success btn-lg">
+                                            <a asp-action="Order" asp-controller="Product" class="text-white">Đặt hàng <i class="fas fa-long-arrow-alt-right ms-2"></i></a>
                                         </button>
 
                                     </div>

@@ -7,8 +7,6 @@
     --web-bg-color: #f9fafb;
 }
 
-
-
 html {
     font-size: 14px;
     position: relative;
@@ -48,3 +46,6 @@ body {
     background-size: cover !important;
 }
 
+.font-roboto {
+    font-family: Roboto, sans-serif;
+}

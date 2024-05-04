@@ -1,0 +1,192 @@
+﻿@using AnVatCanTho.Models
+@using AnVatCanThoWeb.ViewModels
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+
+@model OrderVM
+
+@{
+    ViewData["Title"] = "Đặt hàng";
+    List<Product> products = Model.Products;
+    Customer customer = Model.Customer;
+    double total = 0;
+}
+
+
+<div style="margin-top: -2px;" class="container-xxl bg-white p-0">
+    <!-- Navbar & Hero Start -->
+    <div class="container-xxl position-relative p-0">
+        <div class="container-xxl py-5 bg-dark hero-header mb-5">
+            <div class="container text-center my-5 pt-5 pb-4">
+                <h1 class="display-3 text-white mb-3 animated slideInDown font-roboto">Đơn đặt hàng</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center text-uppercase">
+                        <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Home">Trang chủ</a></li>
+                        <li class="breadcrumb-item"><a asp-action="Cart" asp-controller="Product">Giỏ hàng</a></li>
+                        <li class="breadcrumb-item text-white active" aria-current="page">Đơn hàng</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Navbar & Hero End -->
+    <!-- Menu Start -->
+    <div class="container-xxl py-5">
+        <div class="container">
+            <div class="row g-4">
+                <div>
+                    <a asp-action="Cart" asp-controller="Product">
+                        <i class="fas fa-long-arrow-alt-left me-2"></i>
+                        Giỏ hàng
+                    </a>
+                </div>
+                @if (products.Count > 0)
+                {
+                    foreach (Product item in products)
+                    {
+                        var productImg = item.ProductImages.FirstOrDefault(p => p.ProductId == item.Id);
+                        var imgPath = productImg is null ? "no-image.jpg" : productImg.PathName;
+                        int quantity = (int)HttpContextAccessor.HttpContext.Session.GetInt32($"Quantity_{item.Id}");
+
+                        <div class="card mb-1">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div class="d-flex flex-row align-items-center">
+                                        <div>
+                                            <img src="@Url.Content($"~/images/Products/{imgPath}")"
+                                                 class="img-fluid rounded-3" alt="Shopping item" style="width: 65px;">
+                                        </div>
+                                        <div class="ms-3">
+                                            <h5 class="font-roboto">@item.Name</h5>
+                                            <p class="small mb-0">@item.SnackBar.DisplayName</p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex flex-row align-items-center">
+                                        <div style="width: 64px;">
+                                            <p class="fw-light mb-0">
+                                                <input type="text"
+                                                       class="form-control-plaintext"
+                                                       id="quantityInput_@item.Id"
+                                                       value="@quantity"
+                                                       aria-label="Quantity"
+                                                       aria-describedby="addon-wrapping"
+                                                       readonly />
+                                            </p>
+                                        </div>
+                                        <div style="width: 100px;">
+                                            <p class="mb-0">@((item.UnitPrice * 1000).ToString("#,###")) VND</p>
+                                        </div>
+                                        <div style="width: 100px;">
+                                            <p class="mb-0 totalPriceItem" id="totalPrice_@item.Id">@((item.UnitPrice * quantity * 1000).ToString("#,###")) VND</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        total += item.UnitPrice * quantity;
+                    }
+                }
+                else
+                {
+                    <p class="text-muted fs-4">Không có sản phẩm nào trong giỏ hàng</p>
+                }
+                <div class="card mb-1">
+                    <div class="card-body text-end">
+                        <span class="fw-bold">Tổng: </span>
+                        @((total * 1000).ToString("#,###")) VND
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-6">
+                    <form asp-action="Order" asp-controller="Product" method="post" id="orderAddressFrm">
+                        <select id="districtSelectInput" name="customerAddress" class="form-select">
+                            <option value="0">---Chọn địa chỉ giao hàng---</option>
+                            @foreach(Address address in customer.Addresses)
+                            {
+                                @* string addressValue = $"{address.DistrictName}_{address.WardName}_{address.NoAndStreet}_{address.CustomerId}"; *@
+                                string addressText = $"{address.NoAndStreet}, {address.WardName}, {address.DistrictName}";
+                                <option value="@address.Id">@addressText</option>
+                            }
+                        </select>
+                    </form>
+                </div>
+                <div class="col-6">
+                    <button type="button" class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#addAddressModal">
+                        <i class="far fa-plus-square"></i>
+                        <span class="ms-2">Thêm địa chỉ</span>
+                    </button>
+                    <div class="modal fade" id="addAddressModal" tabindex="-1" aria-labelledby="addAddressModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title font-roboto" id="addAddressModalLabel">Thêm địa chỉ mới</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form asp-action="AddAddress" asp-controller="Address" method="post" id="addAddressFrm">
+                                        <div>
+                                            <label for="districtInput" class="form-label">Chọn quận/huyện: </label>
+                                            <select name="DistrictNameSelection" id="districtInput" class="form-select">
+                                                <option value="0">--- Chọn quận/huyện ---</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="my-3">
+                                            <label for="wardInput" class="form-label">Chọn phường/xã: </label>
+                                            <select name="WardNameSelection" id="wardInput" class="form-select">
+                                                <option value="0">--- Chọn phường/xã ---</option>
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <label for="noAndStreetInput" class="form-label">
+                                                Số nhà:
+                                            </label>
+
+                                            <input type="text" name="NoAndStreet" id="noAndStreetInput" class="form-control" />
+                                        </div>
+                                        <input type="text" name="CustomerId" value="@customer.Id" hidden />
+                                        <input type="text" name="WardName" hidden />
+                                        <input type="text" name="DistrictName" hidden />
+
+                                        
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                    <button type="submit" class="btn btn-primary text-white" form="addAddressFrm">Lưu</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col-12 d-flex justify-content-center">
+                    <button type="submit" form="orderAddressFrm" class="btn btn-success btn-lg text-white">
+                        Đặt hàng
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Menu End -->
+</div>
+
+
+@section Scripts {
+    <script>
+        @if (TempData["Success"] is not null)
+        {
+            @Html.Raw($"toastr.success('{TempData["Success"]}')");
+        }
+        @if (TempData["Failed"] is not null)
+        {
+            @Html.Raw($"toastr.error('{TempData["Failed"]}')")
+            ;
+        }
+    </script>
+    <script src="~/js/order.js"></script>
+}

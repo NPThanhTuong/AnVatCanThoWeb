@@ -9,6 +9,7 @@ using PusherServer;
 using Microsoft.AspNetCore.Authorization;
 using AnVatCanThoWeb.Common.Authentication;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace AnVatCanThoWeb.Controllers
 {
@@ -60,11 +61,14 @@ namespace AnVatCanThoWeb.Controllers
         [AllowAnonymous]
         public IActionResult Index(string[]? categoryFilter, string? sort, string? search, int page)
         {
-            IQueryable<Product> productListQuery = _db.Products.Include(o => o.Ratings).Include(p => p.SnackBar).AsQueryable();
+            IQueryable<Product> productListQuery = _db.Products.Include(o => o.Ratings)
+                .Include(p => p.SnackBar)
+                .Include(p => p.ProductImages)
+                .AsQueryable();
             List<ProductCategory> categoryList = _db.ProductCategories.ToList();
             List<ProductVM> productVM = new List<ProductVM>();
 
-            const int PER_PAGE = 1;
+            const int PER_PAGE = 6;
 
             // Xử lý lọc sản phẩm
             if (categoryFilter.Length > 0)
@@ -185,6 +189,8 @@ namespace AnVatCanThoWeb.Controllers
             // Những sản phẩm có liên quan
             List<Product> relatedProducts = _db.Products
                 .Include(p => p.Ratings)
+                .Include(p => p.SnackBar)
+                .Include(p => p.ProductImages)
                 .Where(p => p.ProductCategoryId == product.ProductCategoryId && p.Id != product.Id)
                 .Take(RELATED_PRODUCT_NUMBER)
                 .ToList();
@@ -242,6 +248,72 @@ namespace AnVatCanThoWeb.Controllers
             return View();
         }
 
+        public ActionResult Order()
+        {
+            List<Product> cartList = new List<Product>();
+
+            string userId = User.Claims.Where(c => c.Type == ClaimTypes.Sid).Select(c => c.Value).SingleOrDefault();
+            Customer customer = _db.Customers.Include(c => c.Addresses).FirstOrDefault(c => c.Id == int.Parse(userId));
+            if (HttpContext.Session.GetString("ShoppingCart") != null)
+            {
+                cartList = JsonConvert.DeserializeObject<List<Product>>(
+                        HttpContext.Session.GetString("ShoppingCart")
+                    );
+            }
+
+            OrderVM orderVM = new OrderVM()
+            {
+                Products = cartList,
+                Customer = customer
+            };
+            return View(orderVM);
+        }
+
+        [HttpPost]
+        public ActionResult Order(string customerAddress)
+        {
+            Dictionary<int, List<Product>> orders = new Dictionary<int, List<Product>>();
+
+            if(customerAddress == "0" || string.IsNullOrEmpty(customerAddress))
+            {
+                TempData["ThongBaoDiaChi"] = "Vui lòng chọn địa chỉ để tiếp tục đặt hàng.";
+                return RedirectToAction("Order");
+            }
+
+            List<Product> cartList = new List<Product>();
+
+            string userId = User.Claims.Where(c => c.Type == ClaimTypes.Sid).Select(c => c.Value).SingleOrDefault();
+            
+            Customer customer = _db.Customers.Include(c => c.Addresses).FirstOrDefault(c => c.Id == int.Parse(userId));
+            if (HttpContext.Session.GetString("ShoppingCart") != null)
+            {
+                cartList = JsonConvert.DeserializeObject<List<Product>>(
+                        HttpContext.Session.GetString("ShoppingCart")
+                    );
+            }
+
+            if(cartList.Count == 0)
+            {
+                TempData["ThongBaoSanPham"] = "Vui lòng thêm sản phẩm vào giỏ hàng.";
+                return RedirectToAction("Order");
+            }
+
+            // Phân loại sản phẩm theo snackbarId
+            foreach (Product item in cartList)
+            {
+                if (orders.ContainsKey(item.SnackBarId))
+                {
+                    orders[item.SnackBarId].Add(item);
+                }
+                else
+                {
+                    orders.Add(item.SnackBarId, new List<Product> { item });
+                }
+            }
+
+            return RedirectToAction("Index", "Product");
+        }
+
         #region API
         [AllowAnonymous]
         public IActionResult Comment(int productId, int page, string sort)
@@ -270,7 +342,7 @@ namespace AnVatCanThoWeb.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddToCart(int id)
+        public IActionResult AddToCart(int id, int quantity = 1)
         {
             List<Product> cartList;
             if (HttpContext.Session.Get("ShoppingCart") == null)
@@ -289,7 +361,7 @@ namespace AnVatCanThoWeb.Controllers
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 }));
                 
-                HttpContext.Session.SetInt32($"Quantity_{product.Id}", 1);
+                HttpContext.Session.SetInt32($"Quantity_{product.Id}", quantity);
             }
             else
             {
@@ -303,7 +375,7 @@ namespace AnVatCanThoWeb.Controllers
                     if (cartItem.Id == id)
                     {
                         int oldQuantity = (int)HttpContext.Session.GetInt32($"Quantity_{id}");
-                        HttpContext.Session.SetInt32($"Quantity_{id}", oldQuantity + 1);
+                        HttpContext.Session.SetInt32($"Quantity_{id}", oldQuantity + quantity);
                         flag = true;
                         break;
                     }
@@ -320,7 +392,7 @@ namespace AnVatCanThoWeb.Controllers
                     {
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                     }));
-                    HttpContext.Session.SetInt32($"Quantity_{product.Id}", 1);
+                    HttpContext.Session.SetInt32($"Quantity_{product.Id}", quantity);
                 }
             }
 
@@ -358,6 +430,31 @@ namespace AnVatCanThoWeb.Controllers
             int cartCount = cartList.Count;
 
             return Json(new { ItemAmount = cartCount });
+        }
+
+        
+        
+
+        [HttpGet("/api/districts")]
+        public async Task<IActionResult> GetAllDistricts()
+        {
+            var districts = await _db.Districts.ToListAsync();
+            return Ok(districts);
+        }
+
+
+        [HttpGet("/api/wards")]
+        public async Task<IActionResult> GetAllWards(string? districtName)
+        {
+            var wardQueryable = _db.Wards.AsQueryable();
+            if (!string.IsNullOrEmpty(districtName))
+            {
+                wardQueryable = wardQueryable.Where(x => x.DistrictName.Equals(districtName));
+            }
+
+            var wards = await wardQueryable.ToListAsync();
+
+            return Ok(wards);
         }
 
         #endregion

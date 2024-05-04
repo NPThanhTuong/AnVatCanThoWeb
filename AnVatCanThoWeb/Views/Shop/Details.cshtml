@@ -1,0 +1,170 @@
+﻿@using AnVatCanTho.Models
+@using AnVatCanThoWeb.ViewModels
+@{
+    ViewData["Title"] = "Chi tiết quầy ăn";
+
+    List<ProductVM> products = Model.ProductsVM;
+    SnackBar snackBar = Model.SnackBar;
+
+    int totalPage = ViewBag.TotalPage;
+    string queryPage = Context.Request.Query["page"];
+    int curPage = 1;
+
+    if (!string.IsNullOrEmpty(queryPage))
+    {
+        _ = int.TryParse(queryPage, out curPage);
+    }
+}
+
+@model DetailSnackBarVM
+
+<div style="margin-top: -2px;" class="container-xxl bg-white p-0">
+    <!-- Navbar & Hero Start -->
+    <div class="container-xxl position-relative p-0">
+        <div class="container-xxl py-5 bg-dark hero-header mb-5">
+            <div class="container text-center my-5 pt-5 pb-4">
+                <h1 class="display-3 text-white mb-3 animated slideInDown font-roboto">Quán ăn vặt</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center text-uppercase">
+                        <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Home">Trang chủ</a></li>
+                        <li class="breadcrumb-item text-white active" aria-current="page">Chi tiết quán ăn</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Navbar & Hero End -->
+    <!-- Menu Start -->
+    <div class="container-xxl py-5">
+        <div class="container">
+            <div class="text-center wow fadeInUp position-relative" data-wow-delay="0.1s">
+                <div style="height: 35vh">
+                    <img class="cover-image-snackbar"
+                         src="@Url.Content($"/images/SnackBar/sunset.jpg")"
+                         alt="Cover image of Snack Bar" />
+                </div>
+                <div class="avatar-image-snackbar">
+                    <img src="@Url.Content($"/images/Snackbar/{snackBar.Avatar}")"
+                         class="rounded-circle"
+                         width="200"
+                         height="200"
+                         alt="Snackbar avatar" />
+                    <h3 class="mt-2 mb-5 font-roboto">@snackBar.DisplayName</h3>
+                </div>
+            </div>
+            <div class="text-center wow fadeInUp" data-wow-delay="0.1s" style="margin-top: 30vh">
+                <h1 class="mb-5 font-roboto">Sản phẩm</h1>
+            </div>
+            <div class="tab-class text-center wow fadeInUp" data-wow-delay="0.1s">
+                <div class="tab-content">
+                    <div id="tab-1" class="tab-pane fade show p-0 active">
+                        <div class="row g-4">
+                            @if (products.Count > 0)
+                            {
+                                @foreach (var item in products)
+                                {
+                                    var productImg = item.Product.ProductImages.FirstOrDefault(p => p.ProductId == item.Product.Id);
+                                    var imgPath = productImg is null ? "no-image.jpg" : productImg.PathName;
+
+                                    <div class="col-6 col-lg-3 mb-4 text-start">
+                                        <div class="card shadow rounded-3">
+                                            <img src="@Url.Content($"~/images/Products/{imgPath}")" class="card-img-top product-image-height rounded-top" alt="Hình ảnh sản phẩm">
+
+                                            <div class="card-body border-top border-gray-300">
+                                                <h3 class="fs-5 fw-bold">@item.Product.Name</h3>
+                                                <a asp-action="Details" asp-controller="Shop" asp-route-id="@snackBar.Id" class="h6 fw-bold">@snackBar.DisplayName</a>
+                                                <h5 class="text-gray mt-2 product-truncate-text font-roboto fs-6">@item.Product.Description</h5>
+                                                <div>
+                                                    <span class="h6 mb-0 text-decoration-line-through me-2 text-gray">
+                                                        @(((item.Product.UnitPrice + new Random().Next(50, 99)) * 1000).ToString("#,###")) đ
+                                                    </span>
+                                                    @* Cần xử lý giá giảm ở đây, hiện tại chỉ hiển thị tạm *@
+                                                    <span class="h5 mb-0 text-danger">@((item.Product.UnitPrice * 1000).ToString("#,###")) đ</span>
+                                                </div>
+                                                <div class="d-flex mt-3">
+                                                    @{
+                                                        int numberOfStar = (int)item.AvgRating;
+                                                    }
+                                                    @for (int i = 1; i <= 5; i++)
+                                                    {
+                                                        if (i <= numberOfStar)
+                                                        {
+                                                            <span class="star fas fa-star text-warning me-1"></span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="star fas fa-star text-gray me-1"></span>
+                                                        }
+                                                    }
+
+                                                    <span class="badge ms-2 text-dark-gray">@(item.AvgRating > 0 ? (int)item.AvgRating : 0)</span>
+                                                </div>
+
+                                            </div>
+                                            <div class="card-footer bg-gray-200 border-top border-gray-300 p-4">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="me-auto">
+                                                        <button onClick="AddToCart(@item.Product.Id, false, '%2FShop%2FDetails%2F' + @snackBar.Id)" class="btn product-cart-btn px-1 fs-4" id="cart_icon_@item.Product.Id" type="button" aria-label="Thêm vào giỏ hàng" title="Thêm vào giỏ hàng">
+                                                            <i class="fas fa-cart-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                    <a class="btn btn-success rounded-3" asp-action="Details" asp-controller="Product" asp-route-id="@item.Product.Id">Chi tiết</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <p class="text-muted text-center fsborder-4 fw-4">Không có sản phẩm nào</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item @(curPage <= 1 ? "disabled" : "")"
+                                onclick="PrevPage(@totalPage)">
+                                <button class="page-link" @(curPage <= 1 ? "disabled" : "")>
+                                    Trang trước
+                                </button>
+                            </li>
+
+                            @for (int i = 1; i <= totalPage; i++)
+                            {
+                                <li class="page-item @(curPage == i ? "active" : "")" onclick="SpecificPage(@i)">
+                                    <button class="page-link">
+                                        @i
+                                    </button>
+                                </li>
+                            }
+
+                            <li class="page-item @(curPage >= totalPage ? "disabled" : "")"
+                                onclick="NextPage(@totalPage)">
+                                <button class="page-link" @(curPage >= totalPage ? "disabled" : "")>
+                                    Trang sau
+                                </button>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Menu End -->
+</div>
+
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/product.css" asp-append-version="true"></link>
+    <link rel="stylesheet" href="~/css/detail-snackbar.css" asp-append-version="true"></link>
+}
+
+@section Scripts {
+    <script src="~/js/product.js"></script>
+}
