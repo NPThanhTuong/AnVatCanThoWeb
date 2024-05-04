@@ -22,7 +22,7 @@ public static class ModelBuilderExtensions
             .SeedProductsAndRatingsAndComments();
         return builder;
     }
-    
+
     private static ModelBuilder SeedAdminAccount(this ModelBuilder builder)
     {
         builder.Entity<Role>().HasData(new Role
@@ -37,15 +37,15 @@ public static class ModelBuilderExtensions
             {
                 Id = 1,
                 City = "NA",
-                DisplayName = "NA",
+                DisplayName = "Admin",
                 Dob = DateTime.Now,
                 Email = "admin@site.com",
                 Password = BCrypt.Net.BCrypt.HashPassword("Admin123"),
                 Tel = "NA",
-                Username = "NA",
+                Username = "admin",
                 RoleId = 1,
             });
-        
+
         return builder;
     }
     private static ModelBuilder SeedCustomerAccounts(this ModelBuilder builder) // cho customer trong so do co address ay ong
@@ -57,17 +57,19 @@ public static class ModelBuilderExtensions
                 Username = "Nguyễn Văn A",
                 Tel = "0123456789",
                 Email = "nva@gmail.com",
+                Avatar = "user1.jpg",
                 Password = BCrypt.Net.BCrypt.HashPassword("nva123"),
                 Dob = DateTime.Now,
                 DisplayName = "NVA"
-                
-            }, 
-            new Customer 
+
+            },
+            new Customer
             {
                 Id = 2,
                 Username = "Nguyễn Văn B",
                 Tel = "0223456789",
                 Email = "nvb@gmail.com",
+                Avatar = "user2.jpg",
                 Password = BCrypt.Net.BCrypt.HashPassword("nvb123"),
                 Dob = DateTime.Now,
                 DisplayName = "NVB"
@@ -81,7 +83,7 @@ public static class ModelBuilderExtensions
                 DistrictName = NinhKieuDistrict,
                 WardName = NKWard1,
                 NoAndStreet = "3/2",
-            }, 
+            },
             new Address
             {
                 Id = 2,
@@ -173,39 +175,144 @@ public static class ModelBuilderExtensions
         var AvocadoSmoothie = new Product
         {
             Id = 1,
-            Description = "Description",
+            Description = "Sinh tố bơ là một đồ uống mát lạnh và bổ dưỡng, được làm từ quả bơ chín mọng, sữa tươi hoặc sữa dừa, đường hoặc mật ong, và một chút đá xay nhuyễn. Đây là một lựa chọn tuyệt vời cho những người yêu thích hương vị độc đáo và chất dinh dưỡng của quả bơ. Sinh tố bơ có màu xanh đậm tự nhiên, với hương thơm béo ngậy của quả bơ kết hợp với sự ngọt ngào của sữa và đường.",
             Ingredient = "NA",
             Name = "Sinh tố bơ",
             Stock = 1,
-            UnitPrice = 1,
+            UnitPrice = 15,
             SnackBarId = 1,
             ProductCategoryId = 2
         };
         var FrenchFries = new Product
         {
             Id = 2,
-            Description = "Description",
+            Description = "Khoai tây chiên là một món ăn phổ biến trên khắp thế giới, được làm từ khoai tây cắt thành dạng que hoặc thanh, sau đó chiên giòn trong dầu. Khoai tây chiên có bề mặt giòn vàng, bên trong mềm mịn, và thường được ăn kèm với sốt cà chua, sốt mayonnaise, hoặc sốt bơ.",
             Ingredient = "NA",
             Name = "Khoai tây chiên",
             Stock = 1,
-            UnitPrice = 1,
+            UnitPrice = 15,
+            SnackBarId = 2,
+            ProductCategoryId = 3
+        };
+        var SpringRoll = new Product
+        {
+            Id = 3,
+            Description = "Gỏi cuốn, hay còn gọi là spring roll, là một món ăn truyền thống của Việt Nam, được biết đến với vị ngon, hương thơm, và sự tươi mát. Món này thường được làm từ các nguyên liệu tự nhiên và giàu dinh dưỡng như thịt gà hoặc tôm, rau sống, và các loại rau củ khác nhau, được cuốn trong một tờ bánh tráng mềm mịn và mỏng như giấy.",
+            Ingredient = "NA",
+            Name = "Gỏi cuốn",
+            Stock = 1,
+            UnitPrice = 10,
+            SnackBarId = 1,
+            ProductCategoryId = 4
+        };
+        var ChickenFeetWithThaiSauce = new Product
+        {
+            Id = 4,
+            Description = "Món chân gà sốt Thái là một món ăn hấp dẫn và đậm đà, kết hợp giữa sự ngọt của sốt Thái và độ giòn của chân gà. Món này thường được chế biến bằng cách chiên hoặc nướng chân gà cho đến khi chúng giòn vàng, sau đó được tẩm sốt Thái thơm ngon.",
+            Ingredient = "NA",
+            Name = "Chân gà sốt thái",
+            Stock = 1,
+            UnitPrice = 30,
+            SnackBarId = 1,
+            ProductCategoryId = 3
+        };
+        var LemongrassOrangePeachTea = new Product
+        {
+            Id = 5,
+            Description = "Trà đào cam sả là một đồ uống tươi mát và sảng khoái, kết hợp giữa hương vị ngọt ngào của đào, chua nhẹ của cam, và hương thơm dễ chịu của sả. Món này thường được làm từ trà đen hoặc trà xanh pha loãng kèm theo nước ép đào, nước cam tươi và một ít nước ép sả.",
+            Ingredient = "NA",
+            Name = "Trà đào cam sả",
+            Stock = 1,
+            UnitPrice = 15,
+            SnackBarId = 1,
+            ProductCategoryId = 1
+        };
+        var FriedChicken = new Product
+        {
+            Id = 6,
+            Description = "Gà rán là một món ăn phổ biến trên toàn thế giới, được biết đến với bề mặt ngoài giòn vàng và thịt gà mềm mịn bên trong. Món gà này thường được chế biến bằng cách ngâm trong một hỗn hợp gia vị, sau đó được chiên hoặc nướng cho đến khi thịt chín và bề mặt trở nên giòn và vàng ươm. Gà rán có hương vị đậm đà, béo ngậy từ dầu và gia vị, cùng với vị ngọt tự nhiên của thịt gà.",
+            Ingredient = "NA",
+            Name = "Gà rán",
+            Stock = 1,
+            UnitPrice = 20,
+            SnackBarId = 2,
+            ProductCategoryId = 3
+        };
+        var HandPoundedLemonTea = new Product
+        {
+            Id = 7,
+            Description = "Trà chanh giã tay là một đồ uống tươi mát và sảng khoái, được làm từ trà đen hoặc trà xanh pha loãng kèm với chanh và đường, được giã tay hoặc lắc đều để hòa quện hương vị. Đây là một món uống phổ biến, đặc biệt vào mùa hè, khi hương vị chua cay và ngọt ngào của trà chanh giã tay mang lại cảm giác sảng khoái và giải khát.",
+            Ingredient = "NA",
+            Name = "Trà chanh giã tay",
+            Stock = 1,
+            UnitPrice = 20,
             SnackBarId = 2,
             ProductCategoryId = 1
         };
-        builder.Entity<Product>().HasData(FrenchFries, AvocadoSmoothie);
+        var SoursopTea = new Product
+        {
+            Id = 8,
+            Description = "Trà mãng cầu là một loại đồ uống tươi mát và bổ dưỡng, được làm từ lá mãng cầu tươi hoặc lá mãng cầu khô, kết hợp với nước sôi và đường hoặc mật ong để tạo ra một hương vị độc đáo và thơm ngon. Món này thường được thưởng thức nóng hoặc lạnh, tùy thuộc vào sở thích cá nhân.",
+            Ingredient = "NA",
+            Name = "Trà mãng cầu",
+            Stock = 1,
+            UnitPrice = 20,
+            SnackBarId = 2,
+            ProductCategoryId = 1
+        };
+        builder.Entity<Product>().HasData(FrenchFries, AvocadoSmoothie, FriedChicken, LemongrassOrangePeachTea,
+            SpringRoll, ChickenFeetWithThaiSauce, HandPoundedLemonTea, SoursopTea);
         var AvocadoSmoothieImg = new ProductImage
         {
-            PathName = "NA",
+            PathName = "18Arx7CbQe-sinh-to-bo-01.jpg",
             SnackBarId = 1,
             ProductId = 1
         };
         var FrenchFriesImg = new ProductImage
         {
-            PathName = "NA2",
+            PathName = "MBGvAbfLEI-khoai-tay-chien-01.jpg",
             SnackBarId = 2,
             ProductId = 2
         };
-        builder.Entity<ProductImage>().HasData(FrenchFriesImg, AvocadoSmoothieImg);
+        var SpringRollImg = new ProductImage
+        {
+            PathName = "goi-cuon.jpg",
+            SnackBarId = 1,
+            ProductId = 3
+        };
+        var ChickenFeetWithThaiSauceImg = new ProductImage
+        {
+            PathName = "chan-ga-sot-thai.jpg",
+            SnackBarId = 1,
+            ProductId = 4
+        };
+
+        var LemongrassOrangePeachTeaImg = new ProductImage
+        {
+            PathName = "tra-dao-cam-sa.jpg",
+            SnackBarId = 1,
+            ProductId = 5
+        };
+        var FriedChickenImg = new ProductImage
+        {
+            PathName = "Wneqo25aPU-ga-ran-01.jpg",
+            SnackBarId = 2,
+            ProductId = 6
+        };
+        var HandPoundedLemonTeaImg = new ProductImage
+        {
+            PathName = "tra-chanh-gia-tay.jpg",
+            SnackBarId = 2,
+            ProductId = 7
+        };
+        var SoursopTeaImg = new ProductImage
+        {
+            PathName = "Tra-Mang-Cau.png",
+            SnackBarId = 2,
+            ProductId = 8
+        };
+        builder.Entity<ProductImage>().HasData(FrenchFriesImg, AvocadoSmoothieImg, LemongrassOrangePeachTeaImg, SpringRollImg,
+            ChickenFeetWithThaiSauceImg, FriedChickenImg, HandPoundedLemonTeaImg, SoursopTeaImg);
         var FrenchFriesRating = new Rating
         {
             SnackBarId = 2,
@@ -220,14 +327,57 @@ public static class ModelBuilderExtensions
             CustomerId = 1,
             Star = 3
         };
-        builder.Entity<Rating>().HasData(AvocadoSmoothieRating, FrenchFriesRating);
+        var SpringRollRating = new Rating
+        {
+            SnackBarId = 1,
+            ProductId = 3,
+            CustomerId = 1,
+            Star = 3
+        };
+        var ChickenFeetWithThaiSauceRating = new Rating
+        {
+            SnackBarId = 1,
+            ProductId = 4,
+            CustomerId = 1,
+            Star = 5
+        };
+        var LemongrassOrangePeachTeaRating = new Rating
+        {
+            SnackBarId = 1,
+            ProductId = 5,
+            CustomerId = 1,
+            Star = 4
+        };
+        var FriedChickenRating = new Rating
+        {
+            SnackBarId = 2,
+            ProductId = 6,
+            CustomerId = 2,
+            Star = 4
+        };
+        var HandPoundedLemonTeaRating = new Rating
+        {
+            SnackBarId = 2,
+            ProductId = 7,
+            CustomerId = 2,
+            Star = 3
+        };
+        var SoursopTeaRating = new Rating
+        {
+            SnackBarId = 2,
+            ProductId = 8,
+            CustomerId = 2,
+            Star = 5
+        };
+        builder.Entity<Rating>().HasData(AvocadoSmoothieRating, FrenchFriesRating, LemongrassOrangePeachTeaRating, SpringRollRating,
+            ChickenFeetWithThaiSauceRating, FriedChickenRating, HandPoundedLemonTeaRating, SoursopTeaRating);
         var AvocadoSmoothieCmt = new Comment
         {
             Id = 1,
             CustomerId = 1,
             SnackBarId = 1,
             ProductId = 1,
-            Content = "NA",
+            Content = "Ngon nha",
         };
         var FrenchFriesCmt = new Comment
         {
@@ -235,35 +385,84 @@ public static class ModelBuilderExtensions
             CustomerId = 2,
             SnackBarId = 2,
             ProductId = 2,
-            Content = "NA",
+            Content = "10 điểm",
         };
-        builder.Entity<Comment>().HasData(AvocadoSmoothieCmt, FrenchFriesCmt);
+        var SpringRollCmt = new Comment
+        {
+            Id = 3,
+            CustomerId = 1,
+            SnackBarId = 1,
+            ProductId = 3,
+            Content = "Hơi bị ngon luôn",
+        };
+        var ChickenFeetWithThaiSauceCmt = new Comment
+        {
+            Id = 4,
+            CustomerId = 1,
+            SnackBarId = 1,
+            ProductId = 4,
+            Content = "Món này ăn hơi bị dính",
+        };
+        var LemongrassOrangePeachTeaCmt = new Comment
+        {
+            Id = 5,
+            CustomerId = 1,
+            SnackBarId = 1,
+            ProductId = 5,
+            Content = "Cũng ngon",
+        };
+        var FriedChickenCmt = new Comment
+        {
+            Id = 6,
+            CustomerId = 2,
+            SnackBarId = 2,
+            ProductId = 6,
+            Content = "Gà giòn rụm luôn",
+        };
+        var HandPoundedLemonTeaCmt = new Comment
+        {
+            Id = 7,
+            CustomerId = 2,
+            SnackBarId = 2,
+            ProductId = 7,
+            Content = "Tuyệt vời",
+        };
+        var SoursopTeaCmt = new Comment
+        {
+            Id = 8,
+            CustomerId = 2,
+            SnackBarId = 2,
+            ProductId = 8,
+            Content = "Nice",
+        };
+        builder.Entity<Comment>().HasData(AvocadoSmoothieCmt, FrenchFriesCmt, LemongrassOrangePeachTeaCmt, SpringRollCmt,
+            ChickenFeetWithThaiSauceCmt, FriedChickenCmt, HandPoundedLemonTeaCmt, SoursopTeaCmt);
         return builder;
     }
     private static ModelBuilder SeedSnackbars(this ModelBuilder builder)
     {
         builder.Entity<SnackBar>()
-            .HasData( new SnackBar
+            .HasData(new SnackBar
             {
                 Id = 1,
                 Username = "snackbar1",
-                Tel = "NA",
+                Tel = "0312345678",
                 Email = "snackbar1@site.com",
-                Description = "Description",
+                Description = "Quán ăn vặt cho sinh viên nổi tiếng bậc nhất Cần Thơ",
                 Password = BCrypt.Net.BCrypt.HashPassword("snackbar1"),
                 Dob = DateTime.Now,
-                DisplayName = "snackbar1"
-            }, 
+                DisplayName = "Ăn vật Sinh Viên"
+            },
             new SnackBar
             {
                 Id = 2,
                 Username = "snackbar2",
-                Tel = "NA",
+                Tel = "0312345678",
                 Email = "snackbar2@site.com",
-                Description = "Description",
+                Description = "Quán ăn vặt hút khách ở Cần Thơ",
                 Password = BCrypt.Net.BCrypt.HashPassword("snackbar2"),
                 Dob = DateTime.Now,
-                DisplayName = "snackbar2"
+                DisplayName = "Quán Hồi Đó"
             }
             );
         builder.Entity<Address>()
@@ -286,7 +485,7 @@ public static class ModelBuilderExtensions
             );
         return builder;
     }
-    private static ModelBuilder SeedOrdersAndBills (this ModelBuilder builder)
+    private static ModelBuilder SeedOrdersAndBills(this ModelBuilder builder)
     {
         var Order1 = new Order
         {
