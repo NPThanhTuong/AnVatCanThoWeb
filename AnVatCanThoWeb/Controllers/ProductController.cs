@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Authorization;
 using AnVatCanThoWeb.Common.Authentication;
 using Newtonsoft.Json;
 using System.Security.Claims;
-using System.Net;
 
 namespace AnVatCanThoWeb.Controllers
 {
@@ -316,7 +315,7 @@ namespace AnVatCanThoWeb.Controllers
                 if (orders.ContainsKey(item.SnackBarId))
                 {
                     orders[item.SnackBarId].Add(item);
-                    total.Add(item.SnackBarId, total[item.SnackBarId] + (quantity * item.UnitPrice));
+                    total[item.SnackBarId] = total[item.SnackBarId] + (quantity * item.UnitPrice);
                 }
                 else
                 {
@@ -483,32 +482,6 @@ namespace AnVatCanThoWeb.Controllers
 
             return Json(new { ItemAmount = cartCount });
         }
-
-
-
-
-        [HttpGet("/api/districts")]
-        public async Task<IActionResult> GetAllDistricts()
-        {
-            var districts = await _db.Districts.ToListAsync();
-            return Ok(districts);
-        }
-
-
-        [HttpGet("/api/wards")]
-        public async Task<IActionResult> GetAllWards(string? districtName)
-        {
-            var wardQueryable = _db.Wards.AsQueryable();
-            if (!string.IsNullOrEmpty(districtName))
-            {
-                wardQueryable = wardQueryable.Where(x => x.DistrictName.Equals(districtName));
-            }
-
-            var wards = await wardQueryable.ToListAsync();
-
-            return Ok(wards);
-        }
-
         #endregion
     }
 }
