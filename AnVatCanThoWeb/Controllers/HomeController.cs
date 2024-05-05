@@ -208,7 +208,7 @@ namespace AnVatCanThoWeb.Controllers
                 r.CustomerId == rating.CustomerId
             );
 
-            if (foundRating is not null) {
+            if (foundRating is null) {
                 _db.Add(rating);
                 _db.SaveChanges();
                 TempData["Success"] = "Đánh giá sản phẩm thành công";
