@@ -98,7 +98,7 @@
 
                                 <div class="card bg-primary text-white rounded-3">
                                     <div class="card-body">
-                                       
+
                                         <div class="d-flex justify-content-between">
                                             <p class="mb-2">Tạm tính</p>
                                             <p class="mb-2 totalPrice">@((total * 1000).ToString("#,###")) VND</p>
@@ -109,9 +109,7 @@
                                             <p class="mb-2 totalPrice">@((total * 1000).ToString("#,###")) VND</p>
                                         </div>
 
-                                        <button type="button" class="btn btn-success btn-lg">
-                                            <a asp-action="Order" asp-controller="Product" class="text-white">Đặt hàng <i class="fas fa-long-arrow-alt-right ms-2"></i></a>
-                                        </button>
+                                        <a asp-action="Order" asp-controller="Product" class="btn btn-success btn-lg text-white">Đặt hàng <i class="fas fa-long-arrow-alt-right ms-2"></i></a>
 
                                     </div>
                                 </div>

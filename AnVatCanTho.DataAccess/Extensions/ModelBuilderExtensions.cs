@@ -593,7 +593,8 @@ public static class ModelBuilderExtensions
                 Avatar = "avt-quan-ghien.jpg",
                 Password = BCrypt.Net.BCrypt.HashPassword("snackbar1"),
                 Dob = DateTime.Now,
-                DisplayName = "Quán Ghiền"
+                DisplayName = "Quán Ghiền",
+                CoverImage = "cover-quan-ghien.jpg"
             },
             new SnackBar
             {
@@ -605,7 +606,8 @@ public static class ModelBuilderExtensions
                 Avatar = "avt-quan-hoi-do.jpg",
                 Password = BCrypt.Net.BCrypt.HashPassword("snackbar2"),
                 Dob = DateTime.Now,
-                DisplayName = "Quán Hồi Đó"
+                DisplayName = "Quán Hồi Đó",
+                CoverImage = "cover-hoi-do.jpg"
             },
             new SnackBar
             {
@@ -617,7 +619,8 @@ public static class ModelBuilderExtensions
                 Avatar = "avt-quan-di-lan.jpg",
                 Password = BCrypt.Net.BCrypt.HashPassword("snackbar3"),
                 Dob = DateTime.Now,
-                DisplayName = "Da heo chiên giòn Dì Lan"
+                DisplayName = "Da heo chiên giòn Dì Lan",
+                CoverImage = "cover-di-lan.jpg"
             },
             new SnackBar
             {
@@ -629,7 +632,8 @@ public static class ModelBuilderExtensions
                 Avatar = "avt-quan-co-huong.jpg",
                 Password = BCrypt.Net.BCrypt.HashPassword("snackbar4"),
                 Dob = DateTime.Now,
-                DisplayName = "Quán bánh tráng cô Hưng"
+                DisplayName = "Quán bánh tráng cô Hưng",
+                CoverImage = "cover-co-hung.jpg"
             },
             new SnackBar
             {
@@ -641,7 +645,8 @@ public static class ModelBuilderExtensions
                 Avatar = "avt-quan-gao-dua.jpg",
                 Password = BCrypt.Net.BCrypt.HashPassword("snackbar5"),
                 Dob = DateTime.Now,
-                DisplayName = "Quán ăn vặt Gáo Dừa"
+                DisplayName = "Quán ăn vặt Gáo Dừa",
+                CoverImage = "cover-gao-dua.jpg"
             }
             );
         builder.Entity<Address>()
