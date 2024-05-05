@@ -5,6 +5,7 @@ using AnVatCanThoWeb.Areas.Admin.Common;
 using AnVatCanThoWeb.Common.Authentication;
 using DotnetGeminiSDK.Client.Interfaces;
 using DotnetGeminiSDK.Model.Request;
+using DotnetGeminiSDK.Model.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -85,13 +86,21 @@ public class HomeController : Controller
                      + "\nDựa vào lược đồ cơ sở dữ liệu Microsoft SQL Server trên, viết truy vấn Transact-SQL đáp ứng yêu cầu sau:\n"
                      + naturalQuery;
 
-        var sqlResult = await _geminiClient.TextPrompt(prompt, new GenerationConfig
+        GeminiMessageResponse? sqlResult;
+        try
         {
-            Temperature = 0D,
-            MaxOutputTokens = 256,
-            TopP = 0.99D,
-        });
-
+            sqlResult = await _geminiClient.TextPrompt(prompt, new GenerationConfig
+            {
+                Temperature = 0D,
+                MaxOutputTokens = 256,
+                TopP = 0.99D,
+            });
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+        
         if (sqlResult is null
             || !sqlResult.Candidates.Any()
             || !sqlResult.Candidates.First().Content.Parts.Any())
@@ -116,12 +125,20 @@ public class HomeController : Controller
         var prompt = "Verify that the SQL query below is a valid Transact-SQL query or not. If valid, response '1':\n"
                      + sqlQuery;
 
-        var sqlResult = await _geminiClient.TextPrompt(prompt, new GenerationConfig
+        GeminiMessageResponse? sqlResult;
+        try
         {
-            Temperature = 0D,
-            MaxOutputTokens = 256,
-            TopP = 0.99D,
-        });
+            sqlResult = await _geminiClient.TextPrompt(prompt, new GenerationConfig
+            {
+                Temperature = 0D,
+                MaxOutputTokens = 256,
+                TopP = 0.99D,
+            });
+        }
+        catch (Exception)
+        {
+            return false;
+        }
 
         if (sqlResult is null
             || !sqlResult.Candidates.Any()

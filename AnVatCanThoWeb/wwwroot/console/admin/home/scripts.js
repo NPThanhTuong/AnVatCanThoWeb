@@ -52,7 +52,11 @@ function turnDataIntoTable(data) {
     for(let row of data) {
         const bodyTr = $("<tr></tr>");
         Object.keys(row).forEach((field) => {
-            bodyTr.append($(`<td>${row[field]}</td>`));
+            if(typeof row[field] === "object") {
+                bodyTr.append($(`<td>Không có dữ liệu</td>`));
+            } else {
+                bodyTr.append($(`<td>${row[field]}</td>`));
+            }
         });
         tableBody.append(bodyTr);
     }
