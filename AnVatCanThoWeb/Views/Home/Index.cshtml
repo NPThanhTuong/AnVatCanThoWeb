@@ -111,7 +111,7 @@
         <div class="container">
             <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
                 <h5 class="section-title ff-secondary text-center text-primary fw-normal">Thực đơn</h5>
-                <h1 class="mb-5 font-roboto">Những ăn phổ biến nhất</h1>
+                <h1 class="mb-5 font-roboto">Những món ăn phổ biến nhất</h1>
             </div>
             <div class="tab-class text-center wow fadeInUp" data-wow-delay="0.1s">
                 <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5">
@@ -133,7 +133,7 @@
                                 var productImg = item.Product.ProductImages.FirstOrDefault(p => p.ProductId == item.Product.Id);
                                 var imgPath = productImg is null ? "no-image.jpg" : productImg.PathName;
 
-                                <div class="col-6 col-lg-4 mb-4 text-start">
+                                <div class="col-6 col-lg-3 mb-4 text-start">
                                     <div class="card shadow rounded-3">
                                         <img src="@Url.Content($"~/images/Products/{imgPath}")" class="card-img-top product-image-height rounded-top" alt="Hình ảnh sản phẩm">
 
