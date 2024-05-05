@@ -56,7 +56,7 @@
                             @if (!order.Status)
                             {
                                 <span class="badge text-bg-danger" style="font-size: 11px; height: auto">
-                                    Chưa xử lý
+                                    Đang xử lý
                                 </span>
                             }
                             else
@@ -79,7 +79,7 @@
                             </span>
                             <span class="ms-1">@order.CustomerName</span>
 
-                            <a href="#" class="ms-3">
+                            <a asp-action="Details" asp-controller="Customers" asp-route-id="@order.CustomerId" class="ms-3">
                                 Xem khách hàng
                             </a>
                         </div>

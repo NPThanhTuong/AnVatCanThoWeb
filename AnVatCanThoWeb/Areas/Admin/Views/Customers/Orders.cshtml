@@ -53,7 +53,7 @@
                             @if (!order.Status)
                             {
                                 <span class="badge text-bg-danger" style="font-size: 11px; height: auto">
-                                    Chưa xử lý
+                                    Đang xử lý
                                 </span>
                             }
                             else
@@ -76,7 +76,7 @@
                             </span>
                             <span class="ms-1">@order.SnackbarName</span>
 
-                            <a href="#" class="ms-3">
+                            <a asp-action="Details" asp-controller="Snackbars" asp-route-id="@order.SnackbarId" class="ms-3">
                                 Xem quầy
                             </a>
                         </div>
