@@ -6,6 +6,12 @@ public class CreateProductViewModelValidator : AbstractValidator<CreateProductVi
 {
     public CreateProductViewModelValidator()
     {
+        RuleFor(x => x.UnitPrice).NotEmpty()
+            .WithMessage("Vui lòng nhập giá sản phẩm");
+
+        RuleFor(x => x.Stock).NotEmpty()
+            .WithMessage("Vui lòng nhập số lượng sản phẩm");
+
         RuleFor(x => x.Name).NotEmpty()
             .WithMessage("Vui lòng nhập tên sản phẩm");
 
