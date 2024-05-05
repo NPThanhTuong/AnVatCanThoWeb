@@ -63,7 +63,7 @@
             @foreach (var name in Model.ProductImages)
             {
                 <div style="width: 150px; height: 150px;" class="shadow-sm">
-                    <img src="@Url.Content($"~/images/Products/{name}")" style="object-fit: cover">
+                    <img src="@Url.Content($"~/images/Products/{name}")" style="object-fit: cover" class="w-100 h-100">
                 </div>
             }
         </span>
